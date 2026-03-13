@@ -21,7 +21,15 @@ const TOPIC_MORPH_TIME_MS = 820;
 const MORPH_BLUR_BASE = 5;
 const MORPH_MAX_BLUR_PX = 22;
 const MORPH_OPACITY_EXPONENT = 0.1;
-const RESERVED_COMING_SOON_ROUTES = new Set(["account"]);
+const TOPBAR_TEXT_LINKS = [
+  { slug: "mission", label: "Mission" },
+  { slug: "contact", label: "Contact" },
+  { slug: "donate", label: "Donate" },
+];
+const RESERVED_COMING_SOON_ROUTES = new Set([
+  "account",
+  ...TOPBAR_TEXT_LINKS.map((link) => link.slug),
+]);
 
 function getPathSegments(pathname) {
   return pathname
@@ -365,6 +373,7 @@ function Navbar() {
   const activeSection = hoveredSection ?? selectedSection;
   const activeTopic = hoveredTopic;
   const isAccountRoute = isAccountPath(activePathname);
+  const activePathSegments = getPathSegments(activePathname);
 
   const syncStateFromPath = (pathname) => {
     setActivePathname(pathname);
@@ -392,6 +401,16 @@ function Navbar() {
       window.history.pushState({}, "", nextPath);
     }
     syncStateFromPath(nextPath);
+    if (isOpenLikeNow()) {
+      closeProjectorScreen();
+    }
+  };
+
+  const navigateTopRoute = (routePath) => {
+    if (window.location.pathname !== routePath) {
+      window.history.pushState({}, "", routePath);
+    }
+    syncStateFromPath(routePath);
     if (isOpenLikeNow()) {
       closeProjectorScreen();
     }
@@ -609,6 +628,24 @@ function Navbar() {
           >
             <img src={logoIcon} alt="" aria-hidden="true" className="topbar-home-icon" />
           </button>
+
+          <div className="topbar-link-group" role="group" aria-label="Primary links">
+            {TOPBAR_TEXT_LINKS.map(({ slug, label }) => {
+              const isActive =
+                activePathSegments.length === 1 && activePathSegments[0] === slug;
+              return (
+                <button
+                  key={slug}
+                  type="button"
+                  className={`topbar-text-btn${isActive ? " is-active" : ""}`}
+                  aria-pressed={isActive}
+                  onClick={() => navigateTopRoute(`/${slug}`)}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
 
           <button
             type="button"
