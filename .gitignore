@@ -40,3 +40,6 @@ Thumbs.db
 # keep dependency manifests in git
 !package.json
 !package-lock.json
+
+# Coding agents
+.claude/

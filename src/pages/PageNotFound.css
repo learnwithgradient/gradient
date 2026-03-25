@@ -1,24 +1,24 @@
 .not-found-card {
-  --info-card-padding: clamp(1.3rem, 3.2vw, 2.25rem);
-  --info-card-gap: clamp(0.375rem, 0.825vw, 0.5rem);
+    --info-card-padding: clamp(1.3rem, 3.2vw, 2.25rem);
+    --info-card-gap: clamp(0.375rem, 0.825vw, 0.5rem);
 }
 
 .not-found-code {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(8.33rem, 35.7vw, 15.47rem);
-  line-height: 0.9;
-  font-weight: 400;
-  color: var(--text);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(8.33rem, 35.7vw, 15.47rem);
+    line-height: 0.9;
+    font-weight: 400;
+    color: var(--text);
 }
 
 .not-found-caption {
-  margin: 0;
-  max-width: 36ch;
-  font-family: var(--font-body);
-  font-size: clamp(0.82rem, 1.9vw, 0.98rem);
-  font-weight: 600;
-  letter-spacing: 0.015em;
-  text-transform: uppercase;
-  color: var(--muted);
+    margin: 0;
+    max-width: 36ch;
+    font-family: var(--font-body);
+    font-size: clamp(0.82rem, 1.9vw, 0.98rem);
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    color: var(--muted);
 }

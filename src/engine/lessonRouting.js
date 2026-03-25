@@ -1,7 +1,8 @@
 import { PROJECTOR_SECTIONS, PROJECTOR_TOPICS } from "./Lessons";
 
 const RAW_BASE_URL = import.meta.env.BASE_URL ?? "/";
-const BASE_PREFIX = RAW_BASE_URL === "/" ? "" : `/${RAW_BASE_URL.replace(/^\/|\/$/g, "")}`;
+const BASE_PREFIX =
+  RAW_BASE_URL === "/" ? "" : `/${RAW_BASE_URL.replace(/^\/|\/$/g, "")}`;
 
 export const toKebabCase = (value) =>
   value
@@ -74,7 +75,7 @@ export const findLessonBySlugs = (sectionSlug, topicSlug, subtopicSlug) => {
       if (toKebabCase(topicEntry.topic) !== topicSlug) continue;
 
       const matchedSubtopic = topicEntry.subtopics.find(
-        (subtopic) => toKebabCase(subtopic) === subtopicSlug
+        (subtopic) => toKebabCase(subtopic) === subtopicSlug,
       );
       if (!matchedSubtopic) continue;
 

@@ -12,6 +12,7 @@ import HomePage from "../pages/HomePage";
 import MissionPage from "../pages/MissionPage";
 import ContactPage from "../pages/ContactPage";
 import DonatePage from "../pages/DonatePage";
+import AccountPage from "../pages/AccountPage";
 import PageNotFound from "../pages/PageNotFound";
 import SectionNav from "./SectionNav";
 import TopicLayer from "./TopicLayer";
@@ -33,13 +34,14 @@ const TOP_ROUTE_STATUSES = {
   mission: "mission",
   contact: "contact",
   donate: "donate",
-  account: "coming-soon",
+  account: "account",
 };
 const STACKABLE_ROUTE_STATUSES = new Set([
   "home",
   "mission",
   "contact",
   "donate",
+  "account",
   "coming-soon",
   "not-found",
 ]);
@@ -79,7 +81,10 @@ function applyElementMorph(el, visibleFraction) {
   const baseOpacityRaw = Number.parseFloat(el.dataset.morphBaseOpacity ?? "1");
   const baseOpacity = Number.isFinite(baseOpacityRaw) ? baseOpacityRaw : 1;
   const f = Math.max(visibleFraction, 0.0001);
-  const blur = Math.min(MORPH_BLUR_BASE / f - MORPH_BLUR_BASE, MORPH_MAX_BLUR_PX);
+  const blur = Math.min(
+    MORPH_BLUR_BASE / f - MORPH_BLUR_BASE,
+    MORPH_MAX_BLUR_PX,
+  );
   const opacity = Math.pow(f, MORPH_OPACITY_EXPONENT) * baseOpacity;
   el.style.filter = `blur(${blur.toFixed(2)}px)`;
   el.style.opacity = opacity.toFixed(4);
@@ -110,7 +115,7 @@ function resolvePathStatus(pathname) {
   const matchedLesson = findLessonBySlugs(
     parsedPath.sectionSlug,
     parsedPath.topicSlug,
-    parsedPath.subtopicSlug
+    parsedPath.subtopicSlug,
   );
 
   if (!matchedLesson) {
@@ -121,15 +126,20 @@ function resolvePathStatus(pathname) {
 }
 
 function Navbar() {
-  const initialPathname = typeof window === "undefined" ? "/" : window.location.pathname;
+  const initialPathname =
+    typeof window === "undefined" ? "/" : window.location.pathname;
   const initialRouteStatus = resolvePathStatus(initialPathname).status;
   const [topicTransitionMode] = useState(resolveTopicTransitionMode);
   const [screenPhase, setScreenPhase] = useState("closed");
   const [selectedSection, setSelectedSection] = useState(PROJECTOR_SECTIONS[0]);
   const [hoveredSection, setHoveredSection] = useState(null);
-  const [displayedSection, setDisplayedSection] = useState(PROJECTOR_SECTIONS[0]);
+  const [displayedSection, setDisplayedSection] = useState(
+    PROJECTOR_SECTIONS[0],
+  );
   const [isMorphingTopics, setIsMorphingTopics] = useState(false);
-  const [morphFromSection, setMorphFromSection] = useState(PROJECTOR_SECTIONS[0]);
+  const [morphFromSection, setMorphFromSection] = useState(
+    PROJECTOR_SECTIONS[0],
+  );
   const [morphToSection, setMorphToSection] = useState(PROJECTOR_SECTIONS[0]);
   const [topicSlideDirection, setTopicSlideDirection] = useState(1);
   const [hoveredTopic, setHoveredTopic] = useState(null);
@@ -179,12 +189,16 @@ function Navbar() {
     } catch {
       const matrixMatch = transform.match(/matrix\(([^)]+)\)/);
       if (matrixMatch?.[1]) {
-        const parts = matrixMatch[1].split(",").map((part) => Number.parseFloat(part.trim()));
+        const parts = matrixMatch[1]
+          .split(",")
+          .map((part) => Number.parseFloat(part.trim()));
         return Number.isFinite(parts[4]) ? parts[4] : 0;
       }
       const matrix3dMatch = transform.match(/matrix3d\(([^)]+)\)/);
       if (matrix3dMatch?.[1]) {
-        const parts = matrix3dMatch[1].split(",").map((part) => Number.parseFloat(part.trim()));
+        const parts = matrix3dMatch[1]
+          .split(",")
+          .map((part) => Number.parseFloat(part.trim()));
         return Number.isFinite(parts[12]) ? parts[12] : 0;
       }
       return 0;
@@ -202,10 +216,10 @@ function Navbar() {
     const measuredWidth = Math.max(
       Math.ceil(measureText?.getBoundingClientRect().width ?? 0),
       Math.ceil(measureText?.scrollWidth ?? 0),
-      Math.ceil(primaryText?.scrollWidth ?? 0)
+      Math.ceil(primaryText?.scrollWidth ?? 0),
     );
     const viewportWidth = Math.ceil(
-      viewport.getBoundingClientRect().width || viewport.clientWidth || 0
+      viewport.getBoundingClientRect().width || viewport.clientWidth || 0,
     );
     const overflowPx = measuredWidth - viewportWidth;
 
@@ -214,7 +228,10 @@ function Navbar() {
       const panGapPx = 26;
       const loopDistancePx = measuredWidth + panGapPx;
       item.style.setProperty("--subtopic-pan-gap", `${panGapPx}px`);
-      item.style.setProperty("--subtopic-pan-loop-distance", `${loopDistancePx}px`);
+      item.style.setProperty(
+        "--subtopic-pan-loop-distance",
+        `${loopDistancePx}px`,
+      );
       const durationMs = Math.min(Math.max(loopDistancePx * 22, 2400), 12000);
       item.style.setProperty("--subtopic-pan-duration", `${durationMs}ms`);
       return true;
@@ -237,7 +254,10 @@ function Navbar() {
 
     const returnListener = subtopicReturnListenersRef.current.get(item);
     if (returnListener) {
-      returnListener.track.removeEventListener("transitionend", returnListener.handler);
+      returnListener.track.removeEventListener(
+        "transitionend",
+        returnListener.handler,
+      );
       subtopicReturnListenersRef.current.delete(item);
     }
 
@@ -278,8 +298,17 @@ function Navbar() {
 
     clearSubtopicReturnTimeout(item);
 
-    const loopDistance = Math.max(parseCssNumber(item.style.getPropertyValue("--subtopic-pan-loop-distance"), 0), 1);
-    const panDuration = Math.max(parseCssNumber(item.style.getPropertyValue("--subtopic-pan-duration"), 0), 1);
+    const loopDistance = Math.max(
+      parseCssNumber(
+        item.style.getPropertyValue("--subtopic-pan-loop-distance"),
+        0,
+      ),
+      1,
+    );
+    const panDuration = Math.max(
+      parseCssNumber(item.style.getPropertyValue("--subtopic-pan-duration"), 0),
+      1,
+    );
     const currentX = getTrackTranslateX(track);
     const traveled = Math.abs(currentX) % loopDistance;
     const delayMs = -((traveled / loopDistance) * panDuration);
@@ -301,8 +330,17 @@ function Navbar() {
 
     clearSubtopicReturnTimeout(item);
 
-    const loopDistance = Math.max(parseCssNumber(item.style.getPropertyValue("--subtopic-pan-loop-distance"), 0), 1);
-    const panDuration = Math.max(parseCssNumber(item.style.getPropertyValue("--subtopic-pan-duration"), 0), 1);
+    const loopDistance = Math.max(
+      parseCssNumber(
+        item.style.getPropertyValue("--subtopic-pan-loop-distance"),
+        0,
+      ),
+      1,
+    );
+    const panDuration = Math.max(
+      parseCssNumber(item.style.getPropertyValue("--subtopic-pan-duration"), 0),
+      1,
+    );
     const currentX = getTrackTranslateX(track);
     const traveled = Math.abs(currentX) % loopDistance;
     if (traveled < 1) {
@@ -316,12 +354,18 @@ function Navbar() {
       return;
     }
     const remainingDistance = loopDistance - traveled;
-    const returnDuration = Math.max((remainingDistance / loopDistance) * panDuration, 180);
+    const returnDuration = Math.max(
+      (remainingDistance / loopDistance) * panDuration,
+      180,
+    );
 
     item.classList.remove("is-panning");
     item.classList.add("is-returning");
     item.style.removeProperty("--subtopic-pan-delay");
-    item.style.setProperty("--subtopic-return-duration", `${returnDuration.toFixed(0)}ms`);
+    item.style.setProperty(
+      "--subtopic-return-duration",
+      `${returnDuration.toFixed(0)}ms`,
+    );
 
     track.style.animation = "none";
     track.style.transition = "none";
@@ -352,7 +396,10 @@ function Navbar() {
   };
 
   const clearPhaseTimer = () => {
-    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
   };
 
   const clearMorphTimer = () => {
@@ -362,29 +409,46 @@ function Navbar() {
     }
   };
 
-  useEffect(() => () => {
-    clearPhaseTimer();
-    clearMorphTimer();
-    if (morphFrameRef.current) { cancelAnimationFrame(morphFrameRef.current); morphFrameRef.current = null; }
-    fromTextNodesRef.current = [];
-    toTextNodesRef.current = [];
-    const stage = topicStageRef.current;
-    if (stage) {
-      stage.querySelectorAll(".projector-subtopic-item").forEach((item) => {
-        clearSubtopicReturnTimeout(item);
-      });
-    }
-  }, []);
+  useEffect(
+    () => () => {
+      clearPhaseTimer();
+      clearMorphTimer();
+      if (morphFrameRef.current) {
+        cancelAnimationFrame(morphFrameRef.current);
+        morphFrameRef.current = null;
+      }
+      fromTextNodesRef.current = [];
+      toTextNodesRef.current = [];
+      const stage = topicStageRef.current;
+      if (stage) {
+        stage.querySelectorAll(".projector-subtopic-item").forEach((item) => {
+          clearSubtopicReturnTimeout(item);
+        });
+      }
+    },
+    [],
+  );
 
-  useEffect(() => { screenPhaseRef.current = screenPhase; }, [screenPhase]);
-  useEffect(() => { displayedSectionRef.current = displayedSection; }, [displayedSection]);
+  useEffect(() => {
+    screenPhaseRef.current = screenPhase;
+  }, [screenPhase]);
+  useEffect(() => {
+    displayedSectionRef.current = displayedSection;
+  }, [displayedSection]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => { prefersReducedMotionRef.current = mq.matches; };
+    const sync = () => {
+      prefersReducedMotionRef.current = mq.matches;
+    };
     sync();
-    mq.addEventListener ? mq.addEventListener("change", sync) : mq.addListener(sync);
-    return () => mq.removeEventListener ? mq.removeEventListener("change", sync) : mq.removeListener(sync);
+    mq.addEventListener
+      ? mq.addEventListener("change", sync)
+      : mq.addListener(sync);
+    return () =>
+      mq.removeEventListener
+        ? mq.removeEventListener("change", sync)
+        : mq.removeListener(sync);
   }, []);
 
   useEffect(() => {
@@ -413,23 +477,38 @@ function Navbar() {
       cancelAnimationFrame(frame);
       window.removeEventListener("resize", remeasure);
     };
-  }, [displayedSection, isMorphingTopics, morphFromSection, morphToSection, screenPhase]);
+  }, [
+    displayedSection,
+    isMorphingTopics,
+    morphFromSection,
+    morphToSection,
+    screenPhase,
+  ]);
 
   const openProjectorScreen = () => {
     clearPhaseTimer();
     screenPhaseRef.current = "opening";
     setScreenPhase("opening");
-    timerRef.current = setTimeout(() => { screenPhaseRef.current = "open"; setScreenPhase("open"); timerRef.current = null; }, OPEN_MS);
+    timerRef.current = setTimeout(() => {
+      screenPhaseRef.current = "open";
+      setScreenPhase("open");
+      timerRef.current = null;
+    }, OPEN_MS);
   };
 
   const closeProjectorScreen = () => {
     clearPhaseTimer();
     screenPhaseRef.current = "closing";
     setScreenPhase("closing");
-    timerRef.current = setTimeout(() => { screenPhaseRef.current = "closed"; setScreenPhase("closed"); timerRef.current = null; }, CLOSE_MS);
+    timerRef.current = setTimeout(() => {
+      screenPhaseRef.current = "closed";
+      setScreenPhase("closed");
+      timerRef.current = null;
+    }, CLOSE_MS);
   };
 
-  const isOpenLikeNow = () => screenPhaseRef.current === "open" || screenPhaseRef.current === "opening";
+  const isOpenLikeNow = () =>
+    screenPhaseRef.current === "open" || screenPhaseRef.current === "opening";
   const isOpenLike = screenPhase === "open" || screenPhase === "opening";
   const activeSection = hoveredSection ?? selectedSection;
   const activeTopic = hoveredTopic;
@@ -450,10 +529,7 @@ function Navbar() {
         }
 
         const topId = topCard ? topCard.id : -1;
-        const nextCards = [
-          ...currentCards,
-          { id: topId + 1, status, path },
-        ];
+        const nextCards = [...currentCards, { id: topId + 1, status, path }];
         return nextCards.slice(-MAX_DEALT_CARDS);
       });
     }
@@ -512,7 +588,9 @@ function Navbar() {
     }
 
     return Array.from(
-      layerEl.querySelectorAll(".projector-topic-heading, .projector-topic-card h2, .projector-topic-card li")
+      layerEl.querySelectorAll(
+        ".projector-topic-heading, .projector-topic-card h2, .projector-topic-card li",
+      ),
     );
   };
 
@@ -571,24 +649,43 @@ function Navbar() {
     }
 
     if (fromSection === toSection) {
-      setDisplayedSection(toSection); displayedSectionRef.current = toSection;
-      setIsMorphingTopics(false); isMorphingTopicsRef.current = false;
-      morphStateRef.current = { status: "idle", from: toSection, to: toSection };
+      setDisplayedSection(toSection);
+      displayedSectionRef.current = toSection;
+      setIsMorphingTopics(false);
+      isMorphingTopicsRef.current = false;
+      morphStateRef.current = {
+        status: "idle",
+        from: toSection,
+        to: toSection,
+      };
       return;
     }
     if (prefersReducedMotionRef.current) {
-      setDisplayedSection(toSection); displayedSectionRef.current = toSection;
-      setIsMorphingTopics(false); isMorphingTopicsRef.current = false;
-      morphStateRef.current = { status: "idle", from: toSection, to: toSection };
+      setDisplayedSection(toSection);
+      displayedSectionRef.current = toSection;
+      setIsMorphingTopics(false);
+      isMorphingTopicsRef.current = false;
+      morphStateRef.current = {
+        status: "idle",
+        from: toSection,
+        to: toSection,
+      };
       return;
     }
     clearMorphTimer();
-    if (morphFrameRef.current) { cancelAnimationFrame(morphFrameRef.current); morphFrameRef.current = null; }
+    if (morphFrameRef.current) {
+      cancelAnimationFrame(morphFrameRef.current);
+      morphFrameRef.current = null;
+    }
 
     const fromIndex = PROJECTOR_SECTIONS.indexOf(fromSection);
     const toIndex = PROJECTOR_SECTIONS.indexOf(toSection);
     setTopicSlideDirection(toIndex >= fromIndex ? 1 : -1);
-    morphStateRef.current = { status: "morphing", from: fromSection, to: toSection };
+    morphStateRef.current = {
+      status: "morphing",
+      from: fromSection,
+      to: toSection,
+    };
     setMorphFromSection(fromSection);
     setMorphToSection(toSection);
     setIsMorphingTopics(true);
@@ -598,9 +695,15 @@ function Navbar() {
     if (topicTransitionMode === "slide") {
       morphTimerRef.current = setTimeout(() => {
         morphTimerRef.current = null;
-        setDisplayedSection(toSection); displayedSectionRef.current = toSection;
-        setIsMorphingTopics(false); isMorphingTopicsRef.current = false;
-        morphStateRef.current = { status: "idle", from: toSection, to: toSection };
+        setDisplayedSection(toSection);
+        displayedSectionRef.current = toSection;
+        setIsMorphingTopics(false);
+        isMorphingTopicsRef.current = false;
+        morphStateRef.current = {
+          status: "idle",
+          from: toSection,
+          to: toSection,
+        };
 
         const queued = morphTargetSectionRef.current;
         if (queued !== toSection) beginTopicMorph(toSection, queued);
@@ -622,8 +725,12 @@ function Navbar() {
         const fraction = Math.min(elapsed / TOPIC_MORPH_TIME_MS, 1);
 
         // Apply per-element Valgo morph to old/new text node sets.
-        fromTextNodesRef.current.forEach((node) => applyElementMorph(node, 1 - fraction));
-        toTextNodesRef.current.forEach((node) => applyElementMorph(node, fraction));
+        fromTextNodesRef.current.forEach((node) =>
+          applyElementMorph(node, 1 - fraction),
+        );
+        toTextNodesRef.current.forEach((node) =>
+          applyElementMorph(node, fraction),
+        );
 
         if (fraction < 1) {
           morphFrameRef.current = requestAnimationFrame(morphStep);
@@ -632,9 +739,15 @@ function Navbar() {
 
         morphFrameRef.current = null;
         clearMorphNodeRefs();
-        setDisplayedSection(toSection); displayedSectionRef.current = toSection;
-        setIsMorphingTopics(false); isMorphingTopicsRef.current = false;
-        morphStateRef.current = { status: "idle", from: toSection, to: toSection };
+        setDisplayedSection(toSection);
+        displayedSectionRef.current = toSection;
+        setIsMorphingTopics(false);
+        isMorphingTopicsRef.current = false;
+        morphStateRef.current = {
+          status: "idle",
+          from: toSection,
+          to: toSection,
+        };
 
         const queued = morphTargetSectionRef.current;
         if (queued !== toSection) beginTopicMorph(toSection, queued);
@@ -650,7 +763,9 @@ function Navbar() {
     morphTargetSectionRef.current = activeSection;
     const current = displayedSectionRef.current;
     const inFlightTarget =
-      morphStateRef.current.status === "morphing" ? morphStateRef.current.to : current;
+      morphStateRef.current.status === "morphing"
+        ? morphStateRef.current.to
+        : current;
 
     if (activeSection === inFlightTarget) return;
     if (isMorphingTopicsRef.current) return;
@@ -680,7 +795,10 @@ function Navbar() {
   };
 
   const toggleProjectorScreen = () => {
-    if (isOpenLikeNow()) { closeProjectorScreen(); return; }
+    if (isOpenLikeNow()) {
+      closeProjectorScreen();
+      return;
+    }
     openProjectorScreen();
   };
 
@@ -691,9 +809,16 @@ function Navbar() {
   };
 
   return (
-    <div className={`app-shell${routeStatus !== "app" ? " app-shell--status" : ""}`}>
+    <div
+      className={`app-shell${routeStatus !== "app" ? " app-shell--status" : ""}`}
+    >
       {isOpenLike ? (
-        <div className="projector-backdrop" onClick={closeProjectorScreen} role="presentation" aria-hidden="true" />
+        <div
+          className="projector-backdrop"
+          onClick={closeProjectorScreen}
+          role="presentation"
+          aria-hidden="true"
+        />
       ) : null}
 
       <header className={`topbar screen-${screenPhase}`}>
@@ -707,10 +832,15 @@ function Navbar() {
             Home
           </button>
 
-          <div className="topbar-link-group" role="group" aria-label="Primary links">
+          <div
+            className="topbar-link-group"
+            role="group"
+            aria-label="Primary links"
+          >
             {TOPBAR_TEXT_LINKS.map(({ slug, label }) => {
               const isActive =
-                activePathSegments.length === 1 && activePathSegments[0] === slug;
+                activePathSegments.length === 1 &&
+                activePathSegments[0] === slug;
               return (
                 <button
                   key={slug}
@@ -777,7 +907,9 @@ function Navbar() {
                       <>
                         <TopicLayer
                           section={morphFromSection}
-                          topicEntries={PROJECTOR_TOPICS[morphFromSection] ?? []}
+                          topicEntries={
+                            PROJECTOR_TOPICS[morphFromSection] ?? []
+                          }
                           activeTopic={activeTopic}
                           layerClassName="projector-topic-layer--from"
                           layerRef={morphFromLayerRef}
@@ -829,7 +961,11 @@ function Navbar() {
           type="button"
           onClick={toggleProjectorScreen}
           aria-pressed={isOpenLike}
-          aria-label={isOpenLike ? "Roll up projector screen" : "Pull down projector screen"}
+          aria-label={
+            isOpenLike
+              ? "Roll up projector screen"
+              : "Pull down projector screen"
+          }
         >
           <span className="projector-pull" />
         </button>
@@ -837,16 +973,25 @@ function Navbar() {
 
       <div className="info-card-deck">
         {dealtCards.map((card, index) => (
-          <div key={card.id} className="info-card-deck-layer" style={{ zIndex: index + 1 }}>
+          <div
+            key={card.id}
+            className="info-card-deck-layer"
+            style={{ zIndex: index + 1 }}
+          >
             {card.status === "home" && <HomePage dealIndex={card.id} />}
             {card.status === "mission" && <MissionPage dealIndex={card.id} />}
             {card.status === "contact" && <ContactPage dealIndex={card.id} />}
             {card.status === "donate" && <DonatePage dealIndex={card.id} />}
+            {card.status === "account" && <AccountPage dealIndex={card.id} />}
             {card.status !== "home" &&
               card.status !== "mission" &&
               card.status !== "contact" &&
-              card.status !== "donate" && (
-                <PageNotFound isComingSoon={card.status === "coming-soon"} dealIndex={card.id} />
+              card.status !== "donate" &&
+              card.status !== "account" && (
+                <PageNotFound
+                  isComingSoon={card.status === "coming-soon"}
+                  dealIndex={card.id}
+                />
               )}
           </div>
         ))}

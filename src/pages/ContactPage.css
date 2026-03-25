@@ -1,17 +1,17 @@
 .contact-page-card {
-  --static-page-body-width: 100%;
-  --static-page-body-max-width: none;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  align-items: stretch;
+    --static-page-body-width: 100%;
+    --static-page-body-max-width: none;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    align-items: stretch;
 }
 
 .contact-page-card .static-page-meta {
-  margin-top: 0;
-  justify-items: end;
-  text-align: right;
+    margin-top: 0;
+    justify-items: end;
+    text-align: right;
 }
 
 .contact-page-inline-links {
-  white-space: nowrap;
+    white-space: nowrap;
 }

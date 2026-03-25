@@ -1,4 +1,134 @@
 .account-page-card {
-  --static-page-body-width: 100%;
-  --static-page-body-max-width: none;
+    --static-page-body-width: 100%;
+    --static-page-body-max-width: none;
+}
+
+/* ── Mode toggle ─────────────────────────────────── */
+
+.account-mode-toggle {
+    display: flex;
+    border: var(--frame);
+    box-shadow: var(--underlay-shadow);
+    width: fit-content;
+}
+
+.account-mode-btn {
+    font-family: var(--font-body);
+    font-size: clamp(0.72rem, 1.35vw, 0.78rem);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.42rem 1.1rem;
+    background: transparent;
+    color: var(--text-fade);
+    border: none;
+    cursor: pointer;
+    transition:
+        background 140ms ease,
+        color 140ms ease;
+}
+
+.account-mode-btn + .account-mode-btn {
+    border-left: var(--frame);
+}
+
+.account-mode-btn.is-active {
+    background: var(--text);
+    color: var(--surface);
+}
+
+.account-mode-btn:hover:not(.is-active) {
+    background: var(--surface-alt);
+    color: var(--text);
+}
+
+/* ── Form ───────────────────────────────────────── */
+
+.account-form {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.65rem, 1.4vw, 0.9rem);
+    width: 100%;
+}
+
+.account-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.account-label {
+    font-family: var(--font-body);
+    font-size: clamp(0.68rem, 1.3vw, 0.74rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-fade);
+}
+
+.account-input {
+    font-family: var(--font-body);
+    font-size: clamp(0.88rem, 1.75vw, 1rem);
+    color: var(--text);
+    background: var(--surface);
+    border: var(--frame);
+    box-shadow: var(--underlay-shadow);
+    padding: 0.52rem 0.75rem;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: box-shadow 140ms ease;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.account-input::placeholder {
+    color: var(--text-fade);
+    opacity: 0.55;
+}
+
+.account-input:focus {
+    box-shadow: 4px 4px 0 var(--shadow-ink);
+}
+
+/* ── Error ──────────────────────────────────────── */
+
+.account-error {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: clamp(0.76rem, 1.45vw, 0.84rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #8b3030;
+}
+
+/* ── Submit ─────────────────────────────────────── */
+
+.account-submit {
+    align-self: flex-start;
+    margin-top: 0.15rem;
+    font-family: var(--font-body);
+    font-size: clamp(0.78rem, 1.45vw, 0.86rem);
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.45rem;
+    background: var(--text);
+    color: var(--surface);
+    border: var(--frame-strong);
+    box-shadow: var(--underlay-shadow);
+    cursor: pointer;
+    transition:
+        box-shadow 140ms ease,
+        transform 100ms ease;
+}
+
+.account-submit:hover {
+    box-shadow: 4px 4px 0 var(--shadow-ink);
+}
+
+.account-submit:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--shadow-ink);
 }

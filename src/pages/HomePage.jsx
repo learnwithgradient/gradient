@@ -15,7 +15,9 @@ function HomePage({ dealIndex }) {
         <span className="home-title-main">Gradient.</span>
       </h1>
       <p className="home-subtitle">
-        Machine Learning made visual.<br />Inspired By Scratch And Khan Academy.
+        Machine Learning made visual.
+        <br />
+        Inspired By Scratch And Khan Academy.
       </p>
     </InfoCard>
   );

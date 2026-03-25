@@ -8,7 +8,9 @@ const RECENT_TILT_WINDOW = 5;
 const recentTiltMagnitudes = [];
 
 function sampleTiltMagnitude() {
-  return DEAL_TILT_MIN_DEG + Math.random() * (DEAL_TILT_MAX_DEG - DEAL_TILT_MIN_DEG);
+  return (
+    DEAL_TILT_MIN_DEG + Math.random() * (DEAL_TILT_MAX_DEG - DEAL_TILT_MIN_DEG)
+  );
 }
 
 function generateCardTilt(dealIndex) {
@@ -24,7 +26,8 @@ function generateCardTilt(dealIndex) {
 
   while (attempt < 12) {
     const isTooCloseToRecent = recentTiltMagnitudes.some(
-      (recentMagnitude) => Math.abs(recentMagnitude - magnitude) < DEAL_TILT_MIN_DELTA_DEG
+      (recentMagnitude) =>
+        Math.abs(recentMagnitude - magnitude) < DEAL_TILT_MIN_DELTA_DEG,
     );
     if (!isTooCloseToRecent) {
       break;
@@ -63,7 +66,12 @@ function InfoCard({
 
   return (
     <main className={screenClassNames} aria-live="polite">
-      <section className={cardClassNames} role={role} aria-label={ariaLabel} style={cardStyle}>
+      <section
+        className={cardClassNames}
+        role={role}
+        aria-label={ariaLabel}
+        style={cardStyle}
+      >
         {children}
       </section>
     </main>

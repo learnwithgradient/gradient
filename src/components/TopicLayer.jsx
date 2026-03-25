@@ -14,7 +14,11 @@ function TopicLayer({
   onSubtopicActivate,
 }) {
   return (
-    <div key={layerKey} className={`projector-topic-layer ${layerClassName}`} ref={layerRef}>
+    <div
+      key={layerKey}
+      className={`projector-topic-layer ${layerClassName}`}
+      ref={layerRef}
+    >
       <p className="projector-topic-heading">{section}</p>
       <div className="projector-topic-grid">
         {topicEntries.map(({ topic, subtopics }) => (
@@ -44,14 +48,20 @@ function TopicLayer({
                   }}
                 >
                   <span className="projector-subtopic-viewport">
-                    <span className="projector-subtopic-measure" aria-hidden="true">
+                    <span
+                      className="projector-subtopic-measure"
+                      aria-hidden="true"
+                    >
                       {subtopic}
                     </span>
                     <span className="projector-subtopic-track">
                       <span className="projector-subtopic-text projector-subtopic-text--primary">
                         {subtopic}
                       </span>
-                      <span className="projector-subtopic-text projector-subtopic-text--clone" aria-hidden="true">
+                      <span
+                        className="projector-subtopic-text projector-subtopic-text--clone"
+                        aria-hidden="true"
+                      >
                         {subtopic}
                       </span>
                     </span>

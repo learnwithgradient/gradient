@@ -32,11 +32,7 @@ export const PROJECTOR_TOPICS = {
     },
     {
       topic: "Logic & Proofs",
-      subtopics: [
-        "Boolean Logic",
-        "Formal Logic",
-        "Proof Techniques",
-      ],
+      subtopics: ["Boolean Logic", "Formal Logic", "Proof Techniques"],
     },
     {
       topic: "Linear Algebra",
@@ -83,11 +79,7 @@ export const PROJECTOR_TOPICS = {
     },
     {
       topic: "Information Theory",
-      subtopics: [
-        "Entropy & Information",
-        "Divergences",
-        "Mutual Information",
-      ],
+      subtopics: ["Entropy & Information", "Divergences", "Mutual Information"],
     },
     {
       topic: "Numerical Computing",
@@ -120,11 +112,7 @@ export const PROJECTOR_TOPICS = {
   "Data Science": [
     {
       topic: "Statistical Inference",
-      subtopics: [
-        "Estimation",
-        "Hypothesis Testing",
-        "Multiple Testing",
-      ],
+      subtopics: ["Estimation", "Hypothesis Testing", "Multiple Testing"],
     },
     {
       topic: "Experimental Design",
@@ -171,10 +159,7 @@ export const PROJECTOR_TOPICS = {
     },
     {
       topic: "Tree-Based Models",
-      subtopics: [
-        "Decision Trees",
-        "Splitting & Regularization",
-      ],
+      subtopics: ["Decision Trees", "Splitting & Regularization"],
     },
     {
       topic: "Ensemble Methods",
@@ -186,10 +171,7 @@ export const PROJECTOR_TOPICS = {
     },
     {
       topic: "Dimensionality Reduction",
-      subtopics: [
-        "Linear Methods",
-        "Nonlinear Methods",
-      ],
+      subtopics: ["Linear Methods", "Nonlinear Methods"],
     },
     {
       topic: "Unsupervised Learning",
@@ -336,19 +318,11 @@ export const PROJECTOR_TOPICS = {
     },
     {
       topic: "Generative Models",
-      subtopics: [
-        "GANs",
-        "Diffusion Models",
-        "Flow & Autoregressive Models",
-      ],
+      subtopics: ["GANs", "Diffusion Models", "Flow & Autoregressive Models"],
     },
     {
       topic: "Reinforcement Learning Foundations",
-      subtopics: [
-        "MDP Foundations",
-        "Dynamic Programming",
-        "Value Methods",
-      ],
+      subtopics: ["MDP Foundations", "Dynamic Programming", "Value Methods"],
     },
     {
       topic: "Policy Learning",

@@ -12,21 +12,35 @@ function DonatePage({ dealIndex = null }) {
       dealIndex={dealIndex}
     >
       <p className="static-page-eyebrow">Donate</p>
-      <h1 className="static-page-title">Support <i>Gradient.</i></h1>
+      <h1 className="static-page-title">
+        Support <i>Gradient.</i>
+      </h1>
       <p className="static-page-body">
-        Thank you for considering a donation to Gradient!
-        Right now, this is just a passion project of mine, so there's no need to worry about
-        financials. However, if you do want to help people, I recommend donating to organizations
-        like{" "}
-        <a href="https://www.khanacademy.org" target="_blank" rel="noopener noreferrer">
+        Thank you for considering a donation to Gradient! Right now, this is
+        just a passion project of mine, so there's no need to worry about
+        financials. However, if you do want to help people, I recommend donating
+        to organizations like{" "}
+        <a
+          href="https://www.khanacademy.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Khan Academy
         </a>
         ,{" "}
-        <a href="https://www.stjude.org" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://www.stjude.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           St. Jude Children's Research Hospital
         </a>
         , or{" "}
-        <a href="https://www.unbound.org" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://www.unbound.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Unbound
         </a>
         .
