@@ -7,6 +7,8 @@ deno.lock
 dist/
 dist-ssr/
 .vite/
+.next/
+out/
 
 # logs
 *.log

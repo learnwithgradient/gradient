@@ -1,3 +1,4 @@
+"use client";
 import React, { useMemo } from "react";
 import "./InfoCard.css";
 
@@ -62,7 +63,7 @@ function InfoCard({
   const cardTilt = useMemo(() => generateCardTilt(dealIndex), [dealIndex]);
   const cardStyle = {
     "--info-card-deal-tilt": `${cardTilt}deg`,
-  };
+  } as React.CSSProperties;
 
   return (
     <main className={screenClassNames} aria-live="polite">

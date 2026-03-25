@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import InfoCard from "../components/InfoCard";
 import "./StaticPage.css";
