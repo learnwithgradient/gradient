@@ -8,6 +8,6 @@
 
 .donate-page-card .static-page-meta {
   margin-top: 0;
-  justify-items: end;
-  text-align: right;
+  justify-items: center;
+  text-align: center;
 }

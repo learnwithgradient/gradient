@@ -1,22 +1,32 @@
 import React, { useMemo } from "react";
 
-const DEAL_TILT_MIN_DEG = 1.2;
-const DEAL_TILT_MAX_DEG = 3.4;
-const DEAL_TILT_SPAN_DEG = DEAL_TILT_MAX_DEG - DEAL_TILT_MIN_DEG;
+const DEAL_TILT_MIN_DEG = 1.6;
+const DEAL_TILT_MAX_DEG = 3.9;
+const DEAL_TILT_SEQUENCE_DEG = [3.45, 2.45, 1.95, 3.7, 2.9, 2.15, 3.2, 2.6];
+const DEAL_TILT_CYCLE_ADJUSTMENTS_DEG = [-0.1, 0.09, -0.05];
 
-function resolveTiltSeed(dealIndex) {
-  return Number.isFinite(dealIndex) ? Math.abs(dealIndex) + 1 : 1;
+function clampTiltMagnitude(value) {
+  return Math.min(DEAL_TILT_MAX_DEG, Math.max(DEAL_TILT_MIN_DEG, value));
 }
 
-function createSeededUnit(seed) {
-  const raw = Math.sin(seed * 12.9898 + 78.233) * 43758.5453123;
-  return raw - Math.floor(raw);
+function resolveTiltIndex(dealIndex) {
+  if (!Number.isFinite(dealIndex)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.abs(Math.trunc(dealIndex)));
 }
 
 function generateCardTilt(dealIndex) {
-  const seed = resolveTiltSeed(dealIndex);
-  const direction = createSeededUnit(seed + 17) >= 0.5 ? 1 : -1;
-  const magnitude = DEAL_TILT_MIN_DEG + createSeededUnit(seed) * DEAL_TILT_SPAN_DEG;
+  const tiltIndex = resolveTiltIndex(dealIndex);
+  const direction = tiltIndex % 2 === 0 ? -1 : 1;
+  const baseMagnitude = DEAL_TILT_SEQUENCE_DEG[tiltIndex % DEAL_TILT_SEQUENCE_DEG.length];
+  const cycleAdjustment =
+    DEAL_TILT_CYCLE_ADJUSTMENTS_DEG[
+      Math.floor(tiltIndex / DEAL_TILT_SEQUENCE_DEG.length) %
+        DEAL_TILT_CYCLE_ADJUSTMENTS_DEG.length
+    ];
+  const magnitude = clampTiltMagnitude(baseMagnitude + cycleAdjustment);
 
   return (magnitude * direction).toFixed(2);
 }

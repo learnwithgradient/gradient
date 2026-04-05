@@ -13,5 +13,40 @@
 }
 
 .contact-page-inline-links {
-  white-space: nowrap;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 0.18rem 0.45rem;
+  white-space: normal;
+}
+
+.contact-page-contact-link {
+  overflow-wrap: anywhere;
+}
+
+.contact-page-divider {
+  color: var(--text-fade);
+}
+
+@media (max-width: 900px) {
+  .contact-page-card .static-page-meta {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .contact-page-inline-links {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-page-inline-links {
+    gap: 0.1rem 0.3rem;
+    line-height: 1.28;
+  }
+
+  .contact-page-divider {
+    display: none;
+  }
 }

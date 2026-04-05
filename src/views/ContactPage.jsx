@@ -16,18 +16,42 @@ function ContactPage({ dealIndex = null }) {
       </p>
       <ul className="static-page-meta">
         <li className="contact-page-inline-links">
-          <a href="mailto:aryan.cs.app@gmail.com">aryan.cs.app [at] gmail [dot] com</a> //{" "}
-          <a href="https://x.com/aryanguptacs" target="_blank" rel="noopener noreferrer">
-            @aryanguptacs
-          </a>{" "}
-          on X
+          <a
+            className="contact-page-contact-link"
+            href="mailto:aryan.cs.app@gmail.com"
+          >
+            aryan.cs.app [at] gmail [dot] com
+          </a>
+          <span className="contact-page-divider" aria-hidden="true">
+            //
+          </span>
+          <a
+            className="contact-page-contact-link"
+            href="https://x.com/aryanguptacs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @aryanguptacs on X
+          </a>
         </li>
         <li className="contact-page-inline-links">
-          <a href="mailto:yaxpatel2004@gmail.com">yaxpatel2004 [at] gmail [dot] com</a> //{" "}
-          <a href="https://x.com/yaxpatel_" target="_blank" rel="noopener noreferrer">
-            @yaxpatel_
-          </a>{" "}
-          on X
+          <a
+            className="contact-page-contact-link"
+            href="mailto:yaxpatel2004@gmail.com"
+          >
+            yaxpatel2004 [at] gmail [dot] com
+          </a>
+          <span className="contact-page-divider" aria-hidden="true">
+            //
+          </span>
+          <a
+            className="contact-page-contact-link"
+            href="https://x.com/yaxpatel_"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @yaxpatel_ on X
+          </a>
         </li>
         <li>
           Notice anything wrong? Open an issue on{" "}

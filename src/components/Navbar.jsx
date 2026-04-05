@@ -8,6 +8,7 @@ import {
   stripBasePath,
   withBasePath,
 } from "../engine/lessonRouting";
+import { getDocumentTitle } from "../engine/pageTitles";
 import HomePage from "../views/HomePage";
 import MissionPage from "../views/MissionPage";
 import ContactPage from "../views/ContactPage";
@@ -506,6 +507,14 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
       closeProjectorScreen();
     }
   };
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    document.title = getDocumentTitle(activePathname);
+  }, [activePathname]);
 
   const getMorphTextNodes = (layerEl) => {
     if (!layerEl) {
