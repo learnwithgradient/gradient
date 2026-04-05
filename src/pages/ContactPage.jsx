@@ -24,6 +24,13 @@ function ContactPage({ dealIndex = null }) {
           </a>{" "}
           on X
         </li>
+        <li className="contact-page-inline-links">
+          <a href="mailto:yaxpatel2004@gmail.com">yaxpatel2004 [at] gmail [dot] com</a> //{" "}
+          <a href="https://x.com/yaxpatel_" target="_blank" rel="noopener noreferrer">
+            @yaxpatel_
+          </a>{" "}
+          on X
+        </li>
         <li>
           Notice anything wrong? Open an issue on{" "}
           <a href="https://github.com/aryan-cs/gradient/issues" target="_blank" rel="noopener noreferrer">

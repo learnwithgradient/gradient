@@ -12,6 +12,7 @@ import HomePage from "../pages/HomePage";
 import MissionPage from "../pages/MissionPage";
 import ContactPage from "../pages/ContactPage";
 import DonatePage from "../pages/DonatePage";
+import AccountPage from "../pages/AccountPage";
 import PageNotFound from "../pages/PageNotFound";
 import SectionNav from "./SectionNav";
 import TopicLayer from "./TopicLayer";
@@ -33,13 +34,14 @@ const TOP_ROUTE_STATUSES = {
   mission: "mission",
   contact: "contact",
   donate: "donate",
-  account: "coming-soon",
+  account: "account",
 };
 const STACKABLE_ROUTE_STATUSES = new Set([
   "home",
   "mission",
   "contact",
   "donate",
+  "account",
   "coming-soon",
   "not-found",
 ]);
@@ -842,9 +844,11 @@ function Navbar() {
             {card.status === "mission" && <MissionPage dealIndex={card.id} />}
             {card.status === "contact" && <ContactPage dealIndex={card.id} />}
             {card.status === "donate" && <DonatePage dealIndex={card.id} />}
+            {card.status === "account" && <AccountPage dealIndex={card.id} />}
             {card.status !== "home" &&
               card.status !== "mission" &&
               card.status !== "contact" &&
+              card.status !== "account" &&
               card.status !== "donate" && (
                 <PageNotFound isComingSoon={card.status === "coming-soon"} dealIndex={card.id} />
               )}
