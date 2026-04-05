@@ -1,0 +1,9 @@
+@import "../src/components/Navbar.css";
+@import "../src/components/InfoCard.css";
+@import "../src/views/StaticPage.css";
+@import "../src/views/HomePage.css";
+@import "../src/views/MissionPage.css";
+@import "../src/views/ContactPage.css";
+@import "../src/views/DonatePage.css";
+@import "../src/views/PageNotFound.css";
+@import "../src/views/AccountPage.css";

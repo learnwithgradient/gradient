@@ -5,6 +5,8 @@ node_modules/
 dist/
 dist-ssr/
 .vite/
+.next/
+out/
 
 # logs
 *.log

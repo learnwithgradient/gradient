@@ -1,45 +1,24 @@
 import React, { useMemo } from "react";
-import "./InfoCard.css";
 
 const DEAL_TILT_MIN_DEG = 1.2;
 const DEAL_TILT_MAX_DEG = 3.4;
-const DEAL_TILT_MIN_DELTA_DEG = 0.45;
-const RECENT_TILT_WINDOW = 5;
-const recentTiltMagnitudes = [];
+const DEAL_TILT_SPAN_DEG = DEAL_TILT_MAX_DEG - DEAL_TILT_MIN_DEG;
 
-function sampleTiltMagnitude() {
-  return DEAL_TILT_MIN_DEG + Math.random() * (DEAL_TILT_MAX_DEG - DEAL_TILT_MIN_DEG);
+function resolveTiltSeed(dealIndex) {
+  return Number.isFinite(dealIndex) ? Math.abs(dealIndex) + 1 : 1;
+}
+
+function createSeededUnit(seed) {
+  const raw = Math.sin(seed * 12.9898 + 78.233) * 43758.5453123;
+  return raw - Math.floor(raw);
 }
 
 function generateCardTilt(dealIndex) {
-  const direction = Number.isFinite(dealIndex)
-    ? dealIndex % 2 === 0
-      ? -1
-      : 1
-    : Math.random() < 0.5
-      ? -1
-      : 1;
-  let magnitude = sampleTiltMagnitude();
-  let attempt = 0;
+  const seed = resolveTiltSeed(dealIndex);
+  const direction = createSeededUnit(seed + 17) >= 0.5 ? 1 : -1;
+  const magnitude = DEAL_TILT_MIN_DEG + createSeededUnit(seed) * DEAL_TILT_SPAN_DEG;
 
-  while (attempt < 12) {
-    const isTooCloseToRecent = recentTiltMagnitudes.some(
-      (recentMagnitude) => Math.abs(recentMagnitude - magnitude) < DEAL_TILT_MIN_DELTA_DEG
-    );
-    if (!isTooCloseToRecent) {
-      break;
-    }
-    magnitude = sampleTiltMagnitude();
-    attempt += 1;
-  }
-
-  recentTiltMagnitudes.push(magnitude);
-  if (recentTiltMagnitudes.length > RECENT_TILT_WINDOW) {
-    recentTiltMagnitudes.shift();
-  }
-
-  const tilt = magnitude * direction;
-  return tilt.toFixed(2);
+  return (magnitude * direction).toFixed(2);
 }
 
 export function useInfoCardDealStyle(dealIndex = null) {

@@ -1,7 +1,5 @@
 import React from "react";
 import InfoCard from "../components/InfoCard";
-import "./StaticPage.css";
-import "./MissionPage.css";
 
 function MissionPage({ dealIndex = null }) {
   return (

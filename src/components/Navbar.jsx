@@ -8,15 +8,13 @@ import {
   stripBasePath,
   withBasePath,
 } from "../engine/lessonRouting";
-import HomePage from "../pages/HomePage";
-import MissionPage from "../pages/MissionPage";
-import ContactPage from "../pages/ContactPage";
-import DonatePage from "../pages/DonatePage";
-import AccountPage from "../pages/AccountPage";
-import PageNotFound from "../pages/PageNotFound";
+import HomePage from "../views/HomePage";
+import MissionPage from "../views/MissionPage";
+import ContactPage from "../views/ContactPage";
+import DonatePage from "../views/DonatePage";
+import PageNotFound from "../views/PageNotFound";
 import SectionNav from "./SectionNav";
 import TopicLayer from "./TopicLayer";
-import "./Navbar.css";
 
 const OPEN_MS = 900;
 const CLOSE_MS = 680;
@@ -122,8 +120,9 @@ function resolvePathStatus(pathname) {
   return { status: "coming-soon", matchedLesson };
 }
 
-function Navbar() {
-  const initialPathname = typeof window === "undefined" ? "/" : window.location.pathname;
+function Navbar({ initialPathname: initialPathnameProp = null }) {
+  const initialPathname =
+    initialPathnameProp ?? (typeof window === "undefined" ? "/" : window.location.pathname);
   const initialRouteStatus = resolvePathStatus(initialPathname).status;
   const [topicTransitionMode] = useState(resolveTopicTransitionMode);
   const [screenPhase, setScreenPhase] = useState("closed");
@@ -844,7 +843,9 @@ function Navbar() {
             {card.status === "mission" && <MissionPage dealIndex={card.id} />}
             {card.status === "contact" && <ContactPage dealIndex={card.id} />}
             {card.status === "donate" && <DonatePage dealIndex={card.id} />}
-            {card.status === "account" && <AccountPage dealIndex={card.id} />}
+            {card.status === "account" && (
+              <PageNotFound isComingSoon={true} dealIndex={card.id} />
+            )}
             {card.status !== "home" &&
               card.status !== "mission" &&
               card.status !== "contact" &&

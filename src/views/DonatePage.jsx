@@ -1,7 +1,5 @@
 import React from "react";
 import InfoCard from "../components/InfoCard";
-import "./StaticPage.css";
-import "./DonatePage.css";
 
 function DonatePage({ dealIndex = null }) {
   return (

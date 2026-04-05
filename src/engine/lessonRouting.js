@@ -1,6 +1,6 @@
 import { PROJECTOR_SECTIONS, PROJECTOR_TOPICS } from "./Lessons";
 
-const RAW_BASE_URL = import.meta.env.BASE_URL ?? "/";
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_BASE_PATH || "/";
 const BASE_PREFIX = RAW_BASE_URL === "/" ? "" : `/${RAW_BASE_URL.replace(/^\/|\/$/g, "")}`;
 
 export const toKebabCase = (value) =>

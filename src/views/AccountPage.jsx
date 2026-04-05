@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../components/InfoCard.css";
 import { useInfoCardDealStyle } from "../components/InfoCard";
-import "./StaticPage.css";
-import "./AccountPage.css";
 
 const ORBIT_DURATION_MS = 880;
 

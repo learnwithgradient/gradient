@@ -1,7 +1,5 @@
 import React from "react";
 import InfoCard from "../components/InfoCard";
-import "./StaticPage.css";
-import "./ContactPage.css";
 
 function ContactPage({ dealIndex = null }) {
   return (

@@ -1,6 +1,5 @@
 import React from "react";
 import InfoCard from "../components/InfoCard";
-import "./PageNotFound.css";
 
 function PageNotFound({ isComingSoon = false, dealIndex }) {
   const statusCode = isComingSoon ? "501" : "404";
