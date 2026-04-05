@@ -5,11 +5,7 @@ import { fileURLToPath } from "node:url";
 import nodemailer from "nodemailer";
 import { parse } from "csv-parse/sync";
 
-const DEFAULT_CC = [
-  "aryan@learnwithgradient.app",
-  "yax@learnwithgradient.app",
-  "hello@learnwithgradient.app",
-];
+const DEFAULT_CC = ["hello@learnwithgradient.app"];
 
 const DEFAULT_SUBJECT = "Request for feedback on Gradient's ML curriculum survey";
 const DEFAULT_CAMPAIGN_ID = "gradient-professor-survey";
