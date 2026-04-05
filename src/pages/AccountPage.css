@@ -292,13 +292,16 @@
 
 @keyframes account-card-lift {
   0% {
-    transform: translate3d(0, 0, 0) rotateX(0deg);
+    transform: translate3d(0, 0, 0) scale(1) rotateX(0deg);
   }
   48% {
-    transform: translate3d(0, -1.15rem, 0) rotateX(10deg);
+    transform: translate3d(0, -1.15rem, 0) scale(1.065) rotateX(10deg);
+  }
+  74% {
+    transform: translate3d(0, -0.38rem, 0) scale(1.028) rotateX(4deg);
   }
   100% {
-    transform: translate3d(0, 0, 0) rotateX(0deg);
+    transform: translate3d(0, 0, 0) scale(1) rotateX(0deg);
   }
 }
 
@@ -309,9 +312,14 @@
     transform: translateY(0.22rem) scaleX(0.86);
   }
   48% {
-    opacity: 0.2;
-    filter: blur(16px);
-    transform: translateY(0.6rem) scaleX(1.08);
+    opacity: 0.18;
+    filter: blur(17px);
+    transform: translateY(0.72rem) scaleX(1.12);
+  }
+  74% {
+    opacity: 0.26;
+    filter: blur(13px);
+    transform: translateY(0.42rem) scaleX(0.98);
   }
   100% {
     opacity: 0.36;
