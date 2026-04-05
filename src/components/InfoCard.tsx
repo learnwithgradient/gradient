@@ -42,6 +42,17 @@ function generateCardTilt(dealIndex) {
   return tilt.toFixed(2);
 }
 
+export function useInfoCardDealStyle(dealIndex = null) {
+  const cardTilt = useMemo(() => generateCardTilt(dealIndex), [dealIndex]);
+
+  return useMemo(
+    () => ({
+      "--info-card-deal-tilt": `${cardTilt}deg`,
+    }),
+    [cardTilt]
+  );
+}
+
 function InfoCard({
   screenClassName = "",
   cardClassName = "",
@@ -56,10 +67,7 @@ function InfoCard({
   const cardClassNames = ["info-card-shell", cardClassName]
     .filter(Boolean)
     .join(" ");
-  const cardTilt = useMemo(() => generateCardTilt(dealIndex), [dealIndex]);
-  const cardStyle = {
-    "--info-card-deal-tilt": `${cardTilt}deg`,
-  };
+  const cardStyle = useInfoCardDealStyle(dealIndex);
 
   return (
     <main className={screenClassNames} aria-live="polite">
