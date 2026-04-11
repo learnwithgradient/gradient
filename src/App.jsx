@@ -3,8 +3,8 @@
 import React from "react";
 import Navbar from "./components/Navbar";
 
-function App({ initialPathname = "/" }) {
-  return <Navbar initialPathname={initialPathname} />;
+function App({ initialPathname = "/", initialAuthStatus = "anonymous" }) {
+  return <Navbar initialPathname={initialPathname} initialAuthStatus={initialAuthStatus} />;
 }
 
 export default App;
