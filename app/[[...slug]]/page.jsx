@@ -1,5 +1,6 @@
 import App from "../../src/App";
 import { getPageTitleLabel } from "../../src/engine/pageTitles";
+import { getServerAuthStatus } from "../../src/lib/supabase/server";
 
 function buildInitialPathname(slug) {
   if (!slug || slug.length === 0) {
@@ -19,8 +20,11 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function CatchAllPage({ params }) {
-  const resolvedParams = await params;
+  const [resolvedParams, initialAuthStatus] = await Promise.all([
+    params,
+    getServerAuthStatus(),
+  ]);
   const initialPathname = buildInitialPathname(resolvedParams?.slug);
 
-  return <App initialPathname={initialPathname} />;
+  return <App initialPathname={initialPathname} initialAuthStatus={initialAuthStatus} />;
 }

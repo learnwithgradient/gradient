@@ -1,7 +1,7 @@
 import { PROJECTOR_SECTIONS, PROJECTOR_TOPICS } from "./Lessons";
+import { stripBasePath, withBasePath } from "../lib/basePath";
 
-const RAW_BASE_URL = process.env.NEXT_PUBLIC_BASE_PATH || "/";
-const BASE_PREFIX = RAW_BASE_URL === "/" ? "" : `/${RAW_BASE_URL.replace(/^\/|\/$/g, "")}`;
+export { stripBasePath, withBasePath };
 
 export const toKebabCase = (value) =>
   value
@@ -11,38 +11,6 @@ export const toKebabCase = (value) =>
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
-
-export const withBasePath = (path = "/") => {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-
-  if (!BASE_PREFIX) {
-    return normalizedPath;
-  }
-
-  if (normalizedPath === "/") {
-    return `${BASE_PREFIX}/`;
-  }
-
-  return `${BASE_PREFIX}${normalizedPath}`;
-};
-
-export const stripBasePath = (pathname = "/") => {
-  const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
-
-  if (!BASE_PREFIX) {
-    return normalizedPath;
-  }
-
-  if (normalizedPath === BASE_PREFIX || normalizedPath === `${BASE_PREFIX}/`) {
-    return "/";
-  }
-
-  if (normalizedPath.startsWith(`${BASE_PREFIX}/`)) {
-    return normalizedPath.slice(BASE_PREFIX.length);
-  }
-
-  return normalizedPath;
-};
 
 export const buildLessonPath = (section, topic, subtopic) =>
   withBasePath(`/${[section, topic, subtopic].map(toKebabCase).join("/")}`);

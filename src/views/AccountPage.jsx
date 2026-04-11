@@ -1,11 +1,39 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useInfoCardDealStyle } from "../components/InfoCard";
+import { withBasePath } from "../lib/basePath";
 
 const ORBIT_DURATION_MS = 880;
+const JSON_HEADERS = {
+  "Content-Type": "application/json",
+};
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 const smootherStep = (value) => value * value * value * (value * (value * 6 - 15) + 10);
+
+const readErrorMessage = async (response, fallbackMessage) => {
+  try {
+    const body = await response.json();
+    return body?.error || fallbackMessage;
+  } catch {
+    return fallbackMessage;
+  }
+};
+
+const postAuthRequest = async (path, payload) => {
+  const response = await fetch(withBasePath(path), {
+    method: "POST",
+    headers: JSON_HEADERS,
+    credentials: "same-origin",
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, "Something went wrong."));
+  }
+
+  return response.json();
+};
 
 const setMotionVariables = (sceneEl, orbitEl, cardEl, direction, progress) => {
   if (!sceneEl || !orbitEl || !cardEl) {
@@ -74,7 +102,12 @@ const clearMotionVariables = (sceneEl, orbitEl, cardEl, finalMode = null) => {
   cardEl.style.removeProperty("--account-card-rotate-y");
 };
 
-function AccountPage({ dealIndex = null }) {
+function AccountPage({
+  dealIndex = null,
+  initialAuthStatus = "anonymous",
+  onAuthStatusChange = null,
+}) {
+  const [authStatus, setAuthStatus] = useState(initialAuthStatus);
   const [mode, setMode] = useState("login");
   const [pendingMode, setPendingMode] = useState(null);
   const [orbitDirection, setOrbitDirection] = useState(null);
@@ -93,10 +126,35 @@ function AccountPage({ dealIndex = null }) {
   const animationFrameRef = useRef(0);
   const animationStartRef = useRef(0);
 
+  const isSessionLoading = authStatus === "loading";
+  const isAuthenticated = authStatus === "authenticated";
   const isOrbiting = orbitDirection !== null;
   const selectedMode = pendingMode ?? mode;
   const isCardFlipped = selectedMode !== "login";
   const dealStyle = useInfoCardDealStyle(dealIndex);
+  const showLoginSuccess = isAuthenticated || loginSubmitted;
+  const canCreateAccount = !isSessionLoading && !showLoginSuccess;
+  const showLoginForm = !isSessionLoading && !showLoginSuccess;
+  const showSignupForm = canCreateAccount && !signupSubmitted;
+  const reportAuthStatus = (nextStatus) => {
+    onAuthStatusChange?.(nextStatus);
+  };
+
+  const applyAuthenticatedState = () => {
+    setAuthStatus("authenticated");
+    reportAuthStatus("authenticated");
+    setMode("login");
+    setPendingMode(null);
+    setOrbitDirection(null);
+    clearMotionVariables(sceneRef.current, orbitRef.current, cardRef.current, "login");
+    setLoginSubmitted(true);
+    setSignupSubmitted(false);
+    setLoginError("");
+    setSignupError("");
+    setLoginPassword("");
+    setSignupPassword("");
+    setSignupConfirmPassword("");
+  };
 
   useEffect(() => {
     if (!orbitDirection || !pendingMode) {
@@ -150,8 +208,49 @@ function AccountPage({ dealIndex = null }) {
     };
   }, []);
 
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    const loadSession = async () => {
+      try {
+        const response = await fetch(withBasePath("/api/auth/session"), {
+          method: "GET",
+          credentials: "same-origin",
+          cache: "no-store",
+          signal: abortController.signal,
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = await response.json();
+
+        if (payload?.authenticated) {
+          applyAuthenticatedState();
+          return;
+        }
+
+        setAuthStatus("anonymous");
+        reportAuthStatus("anonymous");
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setAuthStatus("anonymous");
+          reportAuthStatus("anonymous");
+          setLoginSubmitted(false);
+        }
+      }
+    };
+
+    loadSession();
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
   const switchMode = (nextMode) => {
-    if (nextMode === mode || isOrbiting) {
+    if (nextMode === mode || isOrbiting || isSessionLoading || showLoginSuccess) {
       return;
     }
 
@@ -174,7 +273,7 @@ function AccountPage({ dealIndex = null }) {
     setSignupError("");
   };
 
-  const handleLoginSubmit = (event) => {
+  const handleLoginSubmit = async (event) => {
     event.preventDefault();
     setLoginError("");
 
@@ -183,10 +282,21 @@ function AccountPage({ dealIndex = null }) {
       return;
     }
 
-    setLoginSubmitted(true);
+    try {
+      await postAuthRequest("/api/auth/login", {
+        email: loginEmail,
+        password: loginPassword,
+      });
+      applyAuthenticatedState();
+    } catch (error) {
+      setAuthStatus("anonymous");
+      reportAuthStatus("anonymous");
+      setLoginSubmitted(false);
+      setLoginError(error.message || "Unable to log in right now.");
+    }
   };
 
-  const handleSignupSubmit = (event) => {
+  const handleSignupSubmit = async (event) => {
     event.preventDefault();
     setSignupError("");
 
@@ -200,10 +310,27 @@ function AccountPage({ dealIndex = null }) {
       return;
     }
 
-    setSignupSubmitted(true);
+    try {
+      await postAuthRequest("/api/auth/signup", {
+        email: signupEmail,
+        password: signupPassword,
+        confirmPassword: signupConfirmPassword,
+      });
+      setSignupSubmitted(true);
+      setLoginSubmitted(false);
+      setSignupPassword("");
+      setSignupConfirmPassword("");
+    } catch (error) {
+      setSignupSubmitted(false);
+      setSignupError(error.message || "Unable to create your account.");
+    }
   };
 
   const renderModeSwitch = (activeMode) => {
+    if (isSessionLoading || showLoginSuccess) {
+      return null;
+    }
+
     const isLoginFace = activeMode === "login";
     const nextMode = isLoginFace ? "signup" : "login";
     const switchCopy = isLoginFace
@@ -223,7 +350,7 @@ function AccountPage({ dealIndex = null }) {
   };
 
   return (
-    <main className="info-card-screen account-screen" aria-live="polite">
+    <main className="info-card-screen account-screen" aria-live="polite" aria-busy={isSessionLoading}>
       <div
         ref={sceneRef}
         className={`account-flip-scene${isOrbiting ? " is-orbiting" : ""}`}
@@ -247,18 +374,20 @@ function AccountPage({ dealIndex = null }) {
                 </div>
 
                 <div className="account-panel-body">
-                  <div className={`account-copy${loginSubmitted ? " account-copy--success" : ""}`}>
+                  <div className={`account-copy${showLoginSuccess ? " account-copy--success" : ""}`}>
                     <h1 className="static-page-title account-title">
-                      {loginSubmitted ? "Welcome back." : "Login"}
+                      {isSessionLoading ? "Account" : showLoginSuccess ? "Welcome back." : "Login"}
                     </h1>
                     <p className="static-page-body account-description">
-                      {loginSubmitted
+                      {isSessionLoading
+                        ? "Checking your saved progress."
+                        : showLoginSuccess
                         ? "You've logged in successfully."
                         : "Pick up where you left off and get back to your saved lessons."}
                     </p>
                   </div>
 
-                  {!loginSubmitted ? (
+                  {showLoginForm ? (
                     <form className="account-form" onSubmit={handleLoginSubmit} noValidate>
                       <div className="account-field">
                         <label className="account-label" htmlFor="account-login-email">
@@ -310,6 +439,7 @@ function AccountPage({ dealIndex = null }) {
               className="account-flip-face account-flip-back info-card-shell static-page-card account-page-card"
               role="region"
               aria-label="Sign up"
+              aria-hidden={!canCreateAccount}
             >
               <div className="account-panel">
                 <div className="account-panel-header">
@@ -320,16 +450,18 @@ function AccountPage({ dealIndex = null }) {
                 <div className="account-panel-body">
                   <div className={`account-copy${signupSubmitted ? " account-copy--success" : ""}`}>
                     <h1 className="static-page-title account-title">
-                      {signupSubmitted ? "You're in." : "Sign Up"}
+                      {!canCreateAccount ? "Signed in." : signupSubmitted ? "You're in." : "Sign Up"}
                     </h1>
                     <p className="static-page-body account-description">
-                      {signupSubmitted
+                      {!canCreateAccount
+                        ? "Account creation isn't available while you're logged in."
+                        : signupSubmitted
                         ? "Your account has been created. Start learning."
                         : "Create an account to save progress, favorites, and lesson paths."}
                     </p>
                   </div>
 
-                  {!signupSubmitted ? (
+                  {showSignupForm ? (
                     <form className="account-form" onSubmit={handleSignupSubmit} noValidate>
                       <div className="account-field">
                         <label className="account-label" htmlFor="account-signup-email">

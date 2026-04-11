@@ -13,6 +13,7 @@ import HomePage from "../views/HomePage";
 import MissionPage from "../views/MissionPage";
 import ContactPage from "../views/ContactPage";
 import DonatePage from "../views/DonatePage";
+import AccountPage from "../views/AccountPage";
 import PageNotFound from "../views/PageNotFound";
 import SectionNav from "./SectionNav";
 import TopicLayer from "./TopicLayer";
@@ -121,7 +122,10 @@ function resolvePathStatus(pathname) {
   return { status: "coming-soon", matchedLesson };
 }
 
-function Navbar({ initialPathname: initialPathnameProp = null }) {
+function Navbar({
+  initialPathname: initialPathnameProp = null,
+  initialAuthStatus = "anonymous",
+}) {
   const initialPathname =
     initialPathnameProp ?? (typeof window === "undefined" ? "/" : window.location.pathname);
   const initialRouteStatus = resolvePathStatus(initialPathname).status;
@@ -137,6 +141,7 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   const [hoveredTopic, setHoveredTopic] = useState(null);
   const [activePathname, setActivePathname] = useState(initialPathname);
   const [routeStatus, setRouteStatus] = useState(initialRouteStatus);
+  const [accountAuthStatus, setAccountAuthStatus] = useState(initialAuthStatus);
   const [dealtCards, setDealtCards] = useState(() => [
     {
       id: 0,
@@ -678,6 +683,10 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  useEffect(() => {
+    setAccountAuthStatus(initialAuthStatus);
+  }, [initialAuthStatus]);
+
   const handleSectionHover = (section) => {
     setHoveredSection(section);
     setSelectedSection(section);
@@ -853,7 +862,11 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
             {card.status === "contact" && <ContactPage dealIndex={card.id} />}
             {card.status === "donate" && <DonatePage dealIndex={card.id} />}
             {card.status === "account" && (
-              <PageNotFound isComingSoon={true} dealIndex={card.id} />
+              <AccountPage
+                dealIndex={card.id}
+                initialAuthStatus={accountAuthStatus}
+                onAuthStatusChange={setAccountAuthStatus}
+              />
             )}
             {card.status !== "home" &&
               card.status !== "mission" &&
