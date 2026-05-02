@@ -20,7 +20,7 @@ function getLessonPlanEntryLabel(entry) {
       return "Lab Problem";
     case "video":
     default:
-      return "Video";
+      return "Lecture";
   }
 }
 
