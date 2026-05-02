@@ -100,8 +100,6 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
             <p className="video-lesson-topic">{lesson.topic}</p>
           </div>
 
-          <h1 className="video-lesson-title">{selectedVideo?.title ?? lesson.subtopic}</h1>
-
           <div className="video-lesson-player-shell">
             <iframe
               className="video-lesson-player"
@@ -112,11 +110,6 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
               referrerPolicy="strict-origin-when-cross-origin"
             />
           </div>
-
-          <p className="video-lesson-caption">
-            {selectedVideo?.description ??
-              "Placeholder video card for this lesson while Gradient-specific lesson media is being built."}
-          </p>
         </section>
       </div>
     </InfoCard>
