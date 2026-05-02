@@ -215,8 +215,6 @@
 }
 
 .lesson-card-split.is-plan-collapsed .lesson-card-divider {
-  height: 100%;
-  margin-top: 0;
   transform: translateX(calc((var(--info-card-padding) + 1px) * -1));
 }
 
@@ -241,6 +239,11 @@
   transform: none;
   overflow: visible;
   z-index: 6;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lesson-card-plan-toggle.is-collapsed {
+  transform: translateY(calc(var(--info-card-padding) * -0.52));
 }
 
 .lesson-card-plan-toggle-shape {
