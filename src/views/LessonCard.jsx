@@ -230,6 +230,17 @@ function LessonCard({ lesson, dealIndex = null }) {
 
         <section className="lesson-card-content-pane">
           <div className="lesson-card-media-stack">
+            <div className="lesson-card-player-shell">
+              <iframe
+                className="lesson-card-player"
+                src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
+                title={`${selectedVideoTitle} lesson video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+
             <div className="lesson-card-video-meta">
               <p className="lesson-card-video-title">Video Title Placeholder</p>
               {selectedVideoMetadata?.authorName ? (
@@ -249,17 +260,6 @@ function LessonCard({ lesson, dealIndex = null }) {
                   </p>
                 )
               ) : null}
-            </div>
-
-            <div className="lesson-card-player-shell">
-              <iframe
-                className="lesson-card-player"
-                src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
-                title={`${selectedVideoTitle} lesson video`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
             </div>
           </div>
         </section>

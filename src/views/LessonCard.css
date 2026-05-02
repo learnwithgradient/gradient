@@ -161,21 +161,22 @@
   min-height: 0;
   align-self: center;
   display: grid;
-  gap: clamp(0.42rem, 1.25cqw, 0.72rem);
+  gap: clamp(0.54rem, 1.45cqw, 0.86rem);
 }
 
 .lesson-card-video-meta {
   min-width: 0;
   display: grid;
   gap: clamp(0.08rem, 0.28cqw, 0.14rem);
-  text-align: left;
+  justify-items: center;
+  text-align: center;
 }
 
 .lesson-card-video-title {
   margin: 0;
   min-width: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.02rem, 2.35cqw, 1.36rem);
+  font-size: clamp(1.18rem, 2.7cqw, 1.68rem);
   line-height: 1.08;
   letter-spacing: 0.01em;
   font-weight: 400;
@@ -193,7 +194,6 @@
   text-transform: uppercase;
   color: var(--muted);
   text-decoration: none;
-  width: fit-content;
   transition: color 160ms ease;
 }
 
