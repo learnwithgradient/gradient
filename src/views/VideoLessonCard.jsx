@@ -66,7 +66,7 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
     >
       <div className="video-lesson-split">
         <aside className="video-lesson-playlist-pane" aria-label="Lesson video playlist">
-          <p className="video-lesson-pane-label">Videos</p>
+          <p className="video-lesson-pane-label">Lesson Plan</p>
           <div className="video-lesson-playlist-scroller">
             {playlist.map((video, index) => {
               const isActive = video.id === selectedVideo?.id;
