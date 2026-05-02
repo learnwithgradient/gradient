@@ -414,7 +414,7 @@ a.lesson-card-video-author:focus-visible {
 .lesson-card-document-title {
   margin: 0 0 clamp(0.42rem, 1.45cqw, 0.95rem);
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 8.3cqw, 4.65rem);
+  font-size: clamp(1.45rem, 5.7cqw, 3.1rem);
   line-height: 0.94;
   letter-spacing: 0.01em;
   font-weight: 400;

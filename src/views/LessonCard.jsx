@@ -6,6 +6,8 @@ const PLACEHOLDER_VIDEO_WATCH_URL =
   "https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=1";
 const PLACEHOLDER_VIDEO_BASE_SRC =
   "https://www.youtube.com/embed/aircAruvnKk?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&modestbranding=1&rel=0";
+const DOCUMENT_PLACEHOLDER_TITLE = "Document Placeholder Title";
+const DOCUMENT_PLACEHOLDER_BODY = "Document body text placeholder.";
 
 function getVideoDisplayTitle(video, metadataByWatchUrl, lesson) {
   return metadataByWatchUrl[video.watchUrl]?.title ?? video.fallbackTitle ?? lesson.subtopic;
@@ -56,9 +58,8 @@ function buildPlaceholderPlaylist(lesson) {
       id: "document-1",
       kind: "document",
       label: "Document 1",
-      title: `${lesson.subtopic}: Document 1`,
-      body:
-        "Machine learning is the study of systems that improve their behavior from examples, feedback, and experience instead of being manually programmed for every case.",
+      title: DOCUMENT_PLACEHOLDER_TITLE,
+      body: DOCUMENT_PLACEHOLDER_BODY,
     },
     {
       id: "lab-problem-1",
@@ -69,9 +70,8 @@ function buildPlaceholderPlaylist(lesson) {
       id: "document-2",
       kind: "document",
       label: "Document 2",
-      title: `${lesson.subtopic}: Document 2`,
-      body:
-        "A useful way to reason about an intelligent system is to identify the input it observes, the pattern it learns, and the decision or prediction it produces.",
+      title: DOCUMENT_PLACEHOLDER_TITLE,
+      body: DOCUMENT_PLACEHOLDER_BODY,
     },
     {
       id: "lecture-3",
@@ -95,9 +95,8 @@ function buildPlaceholderPlaylist(lesson) {
       id: "document-3",
       kind: "document",
       label: "Document 3",
-      title: `${lesson.subtopic}: Document 3`,
-      body:
-        "Strong mental models for machine learning come from comparing examples, testing assumptions, and connecting the math to what the model is actually doing.",
+      title: DOCUMENT_PLACEHOLDER_TITLE,
+      body: DOCUMENT_PLACEHOLDER_BODY,
     },
     {
       id: "problem-set-3",
