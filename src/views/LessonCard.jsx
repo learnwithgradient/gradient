@@ -12,6 +12,10 @@ function getVideoDisplayTitle(video, metadataByWatchUrl, lesson) {
 }
 
 function getLessonPlanEntryLabel(entry) {
+  if (entry.label) {
+    return entry.label;
+  }
+
   switch (entry.kind) {
     case "document":
       return "Document";
@@ -28,26 +32,82 @@ function getLessonPlanEntryLabel(entry) {
 function buildPlaceholderPlaylist(lesson) {
   return [
     {
-      id: "part-1",
+      id: "lecture-1",
       kind: "video",
+      label: "Lecture 1",
       watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
       fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=0`,
     },
     {
-      id: "part-2",
+      id: "problem-set-1",
+      kind: "problem-set",
+      label: "Problem Set 1",
+    },
+    {
+      id: "lecture-2",
+      kind: "video",
+      label: "Lecture 2",
+      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
+      fallbackTitle: `${lesson.subtopic}: Lecture 2`,
+      embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=90`,
+    },
+    {
+      id: "document-1",
       kind: "document",
-      title: lesson.subtopic,
+      label: "Document 1",
+      title: `${lesson.subtopic}: Document 1`,
       body:
         "Machine learning is the study of systems that improve their behavior from examples, feedback, and experience instead of being manually programmed for every case.",
     },
     {
-      id: "part-3",
-      kind: "problem-set",
+      id: "lab-problem-1",
+      kind: "lab-problem",
+      label: "Lab Problem 1",
     },
     {
-      id: "part-4",
+      id: "document-2",
+      kind: "document",
+      label: "Document 2",
+      title: `${lesson.subtopic}: Document 2`,
+      body:
+        "A useful way to reason about an intelligent system is to identify the input it observes, the pattern it learns, and the decision or prediction it produces.",
+    },
+    {
+      id: "lecture-3",
+      kind: "video",
+      label: "Lecture 3",
+      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
+      fallbackTitle: `${lesson.subtopic}: Lecture 3`,
+      embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=180`,
+    },
+    {
+      id: "problem-set-2",
+      kind: "problem-set",
+      label: "Problem Set 2",
+    },
+    {
+      id: "lab-problem-2",
       kind: "lab-problem",
+      label: "Lab Problem 2",
+    },
+    {
+      id: "document-3",
+      kind: "document",
+      label: "Document 3",
+      title: `${lesson.subtopic}: Document 3`,
+      body:
+        "Strong mental models for machine learning come from comparing examples, testing assumptions, and connecting the math to what the model is actually doing.",
+    },
+    {
+      id: "problem-set-3",
+      kind: "problem-set",
+      label: "Problem Set 3",
+    },
+    {
+      id: "lab-problem-3",
+      kind: "lab-problem",
+      label: "Lab Problem 3",
     },
   ];
 }
@@ -212,8 +272,8 @@ function LessonCard({ lesson, dealIndex = null }) {
         const { scrollTop, clientHeight, scrollHeight } = scroller;
         const hasOverflow = scrollHeight - clientHeight > 1;
         const nextFadeState = {
-          top: hasOverflow && scrollTop > 1,
-          bottom: hasOverflow && scrollTop + clientHeight < scrollHeight - 1,
+          top: hasOverflow && scrollTop > 0,
+          bottom: hasOverflow && scrollTop + clientHeight < scrollHeight,
         };
 
         setPlanFadeState((currentFadeState) =>

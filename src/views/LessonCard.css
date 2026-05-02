@@ -30,8 +30,10 @@
 }
 
 .lesson-card-plan-pane {
+  height: 100%;
   min-height: 0;
-  display: block;
+  display: flex;
+  flex-direction: column;
   container-type: inline-size;
   min-width: 0;
   overflow: hidden;
@@ -60,38 +62,13 @@
 }
 
 .lesson-card-plan-scroll-shell {
+  --lesson-card-plan-fade-size: clamp(0.85rem, 16cqi, 1.35rem);
   position: relative;
+  flex: 1 1 auto;
+  height: 100%;
   min-height: 0;
   overflow: hidden;
   isolation: isolate;
-}
-
-.lesson-card-plan-scroll-shell::before,
-.lesson-card-plan-scroll-shell::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  height: clamp(0.55rem, 12cqi, 0.95rem);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 160ms ease;
-}
-
-.lesson-card-plan-scroll-shell::before {
-  top: 0;
-  background: linear-gradient(to bottom, var(--surface) 18%, rgba(246, 241, 232, 0));
-}
-
-.lesson-card-plan-scroll-shell::after {
-  bottom: 0;
-  background: linear-gradient(to top, var(--surface) 18%, rgba(246, 241, 232, 0));
-}
-
-.lesson-card-plan-scroll-shell.has-top-fade::before,
-.lesson-card-plan-scroll-shell.has-bottom-fade::after {
-  opacity: 1;
 }
 
 .lesson-card-plan-scroller {
@@ -105,10 +82,63 @@
   padding: clamp(0.22rem, 5cqi, 0.36rem) 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(#000, #000);
+  mask-image: linear-gradient(#000, #000);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .lesson-card-plan-scroller::-webkit-scrollbar {
   display: none;
+}
+
+.lesson-card-plan-scroll-shell.has-top-fade .lesson-card-plan-scroller {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--lesson-card-plan-fade-size),
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--lesson-card-plan-fade-size),
+    #000 100%
+  );
+}
+
+.lesson-card-plan-scroll-shell.has-bottom-fade .lesson-card-plan-scroller {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - var(--lesson-card-plan-fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - var(--lesson-card-plan-fade-size)),
+    transparent 100%
+  );
+}
+
+.lesson-card-plan-scroll-shell.has-top-fade.has-bottom-fade .lesson-card-plan-scroller {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--lesson-card-plan-fade-size),
+    #000 calc(100% - var(--lesson-card-plan-fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--lesson-card-plan-fade-size),
+    #000 calc(100% - var(--lesson-card-plan-fade-size)),
+    transparent 100%
+  );
 }
 
 .lesson-card-plan-item {
