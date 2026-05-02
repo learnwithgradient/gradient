@@ -120,7 +120,6 @@ function LessonContent({ entry, metadataByWatchUrl, lesson }) {
   if (entry.kind === "document") {
     return (
       <article className="lesson-card-document">
-        <p className="lesson-card-document-eyebrow">Document</p>
         <h1 className="lesson-card-document-title">{entry.title ?? lesson.subtopic}</h1>
         {entry.body ? <p className="lesson-card-document-body">{entry.body}</p> : null}
       </article>
