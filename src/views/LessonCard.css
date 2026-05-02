@@ -156,6 +156,52 @@
   align-items: center;
 }
 
+.lesson-card-media-stack {
+  width: 100%;
+  min-height: 0;
+  align-self: center;
+  display: grid;
+  gap: clamp(0.42rem, 1.25cqw, 0.72rem);
+}
+
+.lesson-card-video-meta {
+  min-width: 0;
+  display: grid;
+  gap: clamp(0.08rem, 0.28cqw, 0.14rem);
+  text-align: left;
+}
+
+.lesson-card-video-title {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.02rem, 2.35cqw, 1.36rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.lesson-card-video-author {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 1.9vw, 0.98rem);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  width: fit-content;
+  transition: color 160ms ease;
+}
+
+a.lesson-card-video-author:hover,
+a.lesson-card-video-author:focus-visible {
+  color: var(--text);
+}
+
 .lesson-card-player-shell {
   width: 100%;
   min-height: 0;
