@@ -206,15 +206,10 @@
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 3px;
+  width: 1px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--surface) 0 calc(50% - 0.5px),
-    rgba(0, 0, 0, 0.22) calc(50% - 0.5px) calc(50% + 0.5px),
-    var(--surface) calc(50% + 0.5px) 100%
-  );
+  background: rgba(0, 0, 0, 0.22);
   pointer-events: none;
   z-index: 8;
 }
