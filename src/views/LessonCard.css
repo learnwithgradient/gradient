@@ -189,10 +189,17 @@
   opacity: 0.8;
 }
 
-.lesson-card-player-shell {
+.lesson-card-media-stack {
   width: 100%;
   min-height: 0;
   align-self: center;
+  display: grid;
+  gap: clamp(0.5rem, 1.2cqw, 0.78rem);
+}
+
+.lesson-card-player-shell {
+  width: 100%;
+  min-height: 0;
   border: var(--frame-strong);
   border-radius: 0.45rem;
   overflow: hidden;
@@ -207,6 +214,48 @@
   min-height: 100%;
   aspect-ratio: 16 / 9;
   border: 0;
+}
+
+.lesson-card-video-meta {
+  min-width: 0;
+  display: grid;
+  gap: clamp(0.08rem, 0.3cqw, 0.14rem);
+  text-align: left;
+}
+
+.lesson-card-video-title {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.18rem, 2.95cqw, 1.72rem);
+  line-height: 0.98;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.lesson-card-video-author {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 1.55cqw, 0.92rem);
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-fade);
+  text-decoration: none;
+  width: fit-content;
+  transition: color 160ms ease;
+}
+
+a.lesson-card-video-author:hover,
+a.lesson-card-video-author:focus-visible {
+  color: var(--text);
 }
 
 @media (max-width: 900px) {

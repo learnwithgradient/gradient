@@ -1,30 +1,39 @@
 import React, { useEffect, useMemo, useState } from "react";
 import InfoCard from "../components/InfoCard";
 
+const PLACEHOLDER_VIDEO_WATCH_URL =
+  "https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=1";
 const PLACEHOLDER_VIDEO_BASE_SRC =
   "https://www.youtube.com/embed/aircAruvnKk?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&modestbranding=1&rel=0";
-const PLACEHOLDER_VIDEO_TITLE = "But what is a neural network? | Deep learning chapter 1";
+
+function getVideoDisplayTitle(video, metadataByWatchUrl, lesson) {
+  return metadataByWatchUrl[video.watchUrl]?.title ?? video.fallbackTitle ?? lesson.subtopic;
+}
 
 function buildPlaceholderPlaylist(lesson) {
   return [
     {
       id: "part-1",
-      title: PLACEHOLDER_VIDEO_TITLE,
+      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
+      fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=0`,
     },
     {
       id: "part-2",
-      title: PLACEHOLDER_VIDEO_TITLE,
+      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
+      fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=90`,
     },
     {
       id: "part-3",
-      title: PLACEHOLDER_VIDEO_TITLE,
+      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
+      fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=210`,
     },
     {
       id: "part-4",
-      title: PLACEHOLDER_VIDEO_TITLE,
+      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
+      fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=330`,
     },
   ];
@@ -40,13 +49,73 @@ function LessonCard({ lesson, dealIndex = null }) {
     [lesson.section, lesson.topic, lesson.subtopic]
   );
   const [selectedVideoId, setSelectedVideoId] = useState(playlist[0]?.id ?? null);
+  const [metadataByWatchUrl, setMetadataByWatchUrl] = useState({});
 
   useEffect(() => {
     setSelectedVideoId(playlist[0]?.id ?? null);
   }, [playlist]);
 
+  useEffect(() => {
+    let isCancelled = false;
+
+    const uniqueWatchUrls = [...new Set(playlist.map((video) => video.watchUrl).filter(Boolean))];
+    const missingWatchUrls = uniqueWatchUrls.filter(
+      (watchUrl) => !Object.prototype.hasOwnProperty.call(metadataByWatchUrl, watchUrl)
+    );
+
+    if (missingWatchUrls.length === 0) {
+      return undefined;
+    }
+
+    async function loadMetadata() {
+      const entries = await Promise.all(
+        missingWatchUrls.map(async (watchUrl) => {
+          try {
+            const response = await fetch(
+              `/api/youtube/oembed?url=${encodeURIComponent(watchUrl)}`
+            );
+
+            if (!response.ok) {
+              return [watchUrl, null];
+            }
+
+            return [watchUrl, await response.json()];
+          } catch {
+            return [watchUrl, null];
+          }
+        })
+      );
+
+      if (isCancelled) {
+        return;
+      }
+
+      setMetadataByWatchUrl((currentMetadata) => {
+        const nextMetadata = { ...currentMetadata };
+
+        entries.forEach(([watchUrl, metadata]) => {
+          nextMetadata[watchUrl] = metadata;
+        });
+
+        return nextMetadata;
+      });
+    }
+
+    loadMetadata();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [playlist, metadataByWatchUrl]);
+
   const selectedVideo =
     playlist.find((video) => video.id === selectedVideoId) ?? playlist[0] ?? null;
+  const selectedVideoMetadata = selectedVideo
+    ? metadataByWatchUrl[selectedVideo.watchUrl] ?? null
+    : null;
+  const selectedVideoTitle = selectedVideo
+    ? getVideoDisplayTitle(selectedVideo, metadataByWatchUrl, lesson)
+    : lesson.subtopic;
 
   return (
     <InfoCard
@@ -74,8 +143,11 @@ function LessonCard({ lesson, dealIndex = null }) {
                     <span className="lesson-card-plan-icon" aria-hidden="true">
                       <span className="lesson-card-plan-icon-triangle" />
                     </span>
-                    <span className="lesson-card-plan-title" title={video.title}>
-                      {video.title}
+                    <span
+                      className="lesson-card-plan-title"
+                      title={getVideoDisplayTitle(video, metadataByWatchUrl, lesson)}
+                    >
+                      {getVideoDisplayTitle(video, metadataByWatchUrl, lesson)}
                     </span>
                   </button>
                 );
@@ -99,15 +171,40 @@ function LessonCard({ lesson, dealIndex = null }) {
             <span>{lesson.subtopic}</span>
           </p>
 
-          <div className="lesson-card-player-shell">
-            <iframe
-              className="lesson-card-player"
-              src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
-              title={`${selectedVideo?.title ?? lesson.subtopic} placeholder lesson video`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              referrerPolicy="strict-origin-when-cross-origin"
-            />
+          <div className="lesson-card-media-stack">
+            <div className="lesson-card-player-shell">
+              <iframe
+                className="lesson-card-player"
+                src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
+                title={`${selectedVideoTitle} lesson video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+
+            <div className="lesson-card-video-meta">
+              <p className="lesson-card-video-title" title={selectedVideoTitle}>
+                {selectedVideoTitle}
+              </p>
+              {selectedVideoMetadata?.authorName ? (
+                selectedVideoMetadata.authorUrl ? (
+                  <a
+                    className="lesson-card-video-author"
+                    href={selectedVideoMetadata.authorUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={selectedVideoMetadata.authorName}
+                  >
+                    {selectedVideoMetadata.authorName}
+                  </a>
+                ) : (
+                  <p className="lesson-card-video-author" title={selectedVideoMetadata.authorName}>
+                    {selectedVideoMetadata.authorName}
+                  </p>
+                )
+              ) : null}
+            </div>
           </div>
         </section>
       </div>
