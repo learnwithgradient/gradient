@@ -3,6 +3,8 @@
   --info-card-gap: clamp(0.38rem, 1cqw, 0.68rem);
   --lesson-card-toggle-width: clamp(1.16rem, 2.65cqw, 1.55rem);
   --lesson-card-toggle-height: clamp(2.28rem, 5.2cqw, 2.98rem);
+  --lesson-card-toggle-squeeze-width: clamp(0.16rem, 0.42cqw, 0.24rem);
+  --lesson-card-toggle-morph-duration: 640ms;
   align-items: stretch;
   justify-content: stretch;
   text-align: left;
@@ -203,64 +205,223 @@
 .lesson-card-plan-toggle {
   appearance: none;
   position: absolute;
-  right: 0;
+  left: calc(var(--lesson-card-toggle-width) * -1);
   bottom: clamp(0.3rem, 1cqw, 0.58rem);
-  width: var(--lesson-card-toggle-width);
+  width: calc(var(--lesson-card-toggle-width) * 2);
   height: var(--lesson-card-toggle-height);
   padding: 0;
-  border: var(--frame-strong);
-  border-color: var(--text);
-  border-right: 0;
-  border-radius: 999px 0 0 999px;
-  background: var(--text);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--surface);
-  display: grid;
-  place-items: center;
   cursor: pointer;
-  transform: translateX(0);
-  overflow: hidden;
-  transition:
-    border-radius 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: none;
+  overflow: visible;
 }
 
-.lesson-card-plan-toggle svg {
-  display: block;
+.lesson-card-plan-toggle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--lesson-card-toggle-width);
+  box-sizing: border-box;
+  border: var(--frame-strong);
+  border-color: var(--text);
+  border-radius: 999px 0 0 999px;
+  background: var(--text);
+  will-change: left, width, border-radius;
+}
+
+.lesson-card-plan-toggle-icon {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--lesson-card-toggle-width) * 0.5);
+  z-index: 1;
+  display: grid;
+  place-items: center;
   width: clamp(1.08rem, 2.85cqw, 1.42rem);
   height: clamp(1.08rem, 2.85cqw, 1.42rem);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.lesson-card-plan-toggle-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
   color: currentColor;
   fill: currentColor;
   stroke-width: 0;
   pointer-events: none;
-  transform: translateX(calc(var(--lesson-card-toggle-width) * -0.075));
+}
+
+.lesson-card-plan-toggle-icon-left {
+  opacity: 1;
+}
+
+.lesson-card-plan-toggle-icon-right {
+  left: calc(var(--lesson-card-toggle-width) * 1.5);
+  opacity: 0;
 }
 
 .lesson-card-plan-toggle:hover,
 .lesson-card-plan-toggle:focus-visible {
-  background: var(--text);
   color: var(--surface);
-  transform: translateX(0);
 }
 
 .lesson-card-plan-toggle:focus-visible {
+  outline: 0;
+}
+
+.lesson-card-plan-toggle:focus-visible::before {
   outline: 2px solid var(--text);
   outline-offset: 0.14rem;
 }
 
-.lesson-card-plan-toggle.is-collapsed {
-  right: auto;
-  left: 0;
-  border-right: var(--frame-strong);
-  border-left: 0;
+.lesson-card-plan-toggle.is-collapsed::before {
+  left: var(--lesson-card-toggle-width);
   border-radius: 0 999px 999px 0;
 }
 
-.lesson-card-plan-toggle.is-collapsed svg {
-  transform: translateX(calc(var(--lesson-card-toggle-width) * 0.04));
+.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-icon-left {
+  opacity: 0;
+}
+
+.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-icon-right {
+  opacity: 1;
 }
 
 .lesson-card-plan-toggle.is-collapsed:hover,
 .lesson-card-plan-toggle.is-collapsed:focus-visible {
-  transform: translateX(0);
+  color: var(--surface);
+}
+
+.lesson-card-plan-toggle.is-morphing-to-collapsed::before {
+  animation: lesson-card-toggle-squeeze-to-right var(--lesson-card-toggle-morph-duration)
+    cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.lesson-card-plan-toggle.is-morphing-to-expanded::before {
+  animation: lesson-card-toggle-squeeze-to-left var(--lesson-card-toggle-morph-duration)
+    cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-icon-left {
+  animation: lesson-card-toggle-icon-fade-out var(--lesson-card-toggle-morph-duration) ease both;
+}
+
+.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-icon-right {
+  animation: lesson-card-toggle-icon-fade-in var(--lesson-card-toggle-morph-duration) ease both;
+}
+
+.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-icon-left {
+  animation: lesson-card-toggle-icon-fade-in var(--lesson-card-toggle-morph-duration) ease both;
+}
+
+.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-icon-right {
+  animation: lesson-card-toggle-icon-fade-out var(--lesson-card-toggle-morph-duration) ease both;
+}
+
+@keyframes lesson-card-toggle-squeeze-to-right {
+  0% {
+    left: 0;
+    width: var(--lesson-card-toggle-width);
+    border-radius: 999px 0 0 999px;
+  }
+
+  14% {
+    left: calc(var(--lesson-card-toggle-width) * -0.08);
+    width: calc(var(--lesson-card-toggle-width) * 1.12);
+    border-radius: 999px 0 0 999px;
+  }
+
+  38% {
+    left: calc(var(--lesson-card-toggle-width) - (var(--lesson-card-toggle-squeeze-width) * 0.55));
+    width: calc(var(--lesson-card-toggle-squeeze-width) * 0.72);
+    border-radius: 0;
+  }
+
+  62% {
+    left: calc(var(--lesson-card-toggle-width) * 0.88);
+    width: calc(var(--lesson-card-toggle-width) * 1.16);
+    border-radius: 0 999px 999px 0;
+  }
+
+  80% {
+    left: calc(var(--lesson-card-toggle-width) * 1.04);
+    width: calc(var(--lesson-card-toggle-width) * 0.92);
+    border-radius: 0 999px 999px 0;
+  }
+
+  100% {
+    left: var(--lesson-card-toggle-width);
+    width: var(--lesson-card-toggle-width);
+    border-radius: 0 999px 999px 0;
+  }
+}
+
+@keyframes lesson-card-toggle-squeeze-to-left {
+  0% {
+    left: var(--lesson-card-toggle-width);
+    width: var(--lesson-card-toggle-width);
+    border-radius: 0 999px 999px 0;
+  }
+
+  14% {
+    left: calc(var(--lesson-card-toggle-width) * 0.96);
+    width: calc(var(--lesson-card-toggle-width) * 1.12);
+    border-radius: 0 999px 999px 0;
+  }
+
+  38% {
+    left: calc(var(--lesson-card-toggle-width) - (var(--lesson-card-toggle-squeeze-width) * 0.15));
+    width: calc(var(--lesson-card-toggle-squeeze-width) * 0.72);
+    border-radius: 0;
+  }
+
+  62% {
+    left: calc(var(--lesson-card-toggle-width) * -0.12);
+    width: calc(var(--lesson-card-toggle-width) * 1.16);
+    border-radius: 999px 0 0 999px;
+  }
+
+  80% {
+    left: calc(var(--lesson-card-toggle-width) * 0.06);
+    width: calc(var(--lesson-card-toggle-width) * 0.92);
+    border-radius: 999px 0 0 999px;
+  }
+
+  100% {
+    left: 0;
+    width: var(--lesson-card-toggle-width);
+    border-radius: 999px 0 0 999px;
+  }
+}
+
+@keyframes lesson-card-toggle-icon-fade-out {
+  0%,
+  30% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes lesson-card-toggle-icon-fade-in {
+  0%,
+  54% {
+    opacity: 0;
+  }
+
+  78%,
+  100% {
+    opacity: 1;
+  }
 }
 
 .lesson-card-content-pane {
