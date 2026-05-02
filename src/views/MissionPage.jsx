@@ -16,16 +16,9 @@ function MissionPage({ dealIndex = null }) {
       }
       body={
         <>
-          There's a particular feeling that every student with a good teacher knows: the moment
-          something clicks. Not because you read a textbook, watched a lecture, or took a test,
-          but because you <i>experienced</i> it. You built your intuition.
-          <br />
-          <br />
-          Growing up, I found it in two places: Scratch and Khan Academy. To me, these were the
-          first two truly consequential and influential tools in my life, they set the path for me
-          to become who I am today. In the same way, I hope Gradient can be a tool that helps
-          students find that feeling, and in doing so, truly understand what "artificial
-          intelligence" really is.
+          I haven't yet found words that adequately capture my motivations or vision for Gradient,
+          so this page will come soon. I will say, though, both machine learning and teaching are
+          things that I feel are fundamental to who I am.
         </>
       }
       meta={<li>Aryan Gupta</li>}
