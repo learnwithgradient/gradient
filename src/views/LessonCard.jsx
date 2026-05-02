@@ -177,7 +177,6 @@ function LessonCard({ lesson, dealIndex = null }) {
     >
       <div className="lesson-card-split">
         <aside className="lesson-card-plan-pane" aria-label="Lesson plan">
-          <p className="lesson-card-pane-label">Lesson Plan</p>
           <div
             className={`lesson-card-plan-scroll-shell${
               planFadeState.top ? " has-top-fade" : ""

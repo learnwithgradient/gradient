@@ -17,9 +17,7 @@
 
 .lesson-card-plan-pane {
   min-height: 0;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: clamp(0.14rem, 0.45cqw, 0.28rem);
+  display: block;
   container-type: inline-size;
 }
 
