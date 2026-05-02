@@ -135,11 +135,11 @@
 
 .lesson-card-breadcrumb {
   margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.18rem 0.5rem;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-family: var(--font-body);
   font-size: clamp(0.58rem, 1.4cqw, 0.8rem);
   line-height: 1.1;
@@ -151,6 +151,8 @@
 }
 
 .lesson-card-breadcrumb-separator {
+  display: inline-block;
+  margin-inline: 0.34rem;
   font-size: 0.9em;
   line-height: 1;
   opacity: 0.8;
