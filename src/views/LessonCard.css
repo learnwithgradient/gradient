@@ -111,6 +111,11 @@
   background: rgba(0, 0, 0, 0.04);
 }
 
+.lesson-card-plan-item,
+.lesson-card-plan-item * {
+  cursor: pointer;
+}
+
 .lesson-card-plan-item.is-active {
   background: var(--text);
   color: var(--surface);
