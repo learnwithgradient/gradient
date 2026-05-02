@@ -219,9 +219,16 @@
 }
 
 .lesson-card-split.is-plan-collapsed .lesson-card-divider {
-  height: calc(100% + (var(--info-card-padding) * 2));
-  margin-top: calc(var(--info-card-padding) * -1);
-  transform: translateX(calc((var(--info-card-padding) + 1px) * -1));
+  height: 100%;
+  margin-top: 0;
+  transform: translateX(
+    calc((var(--info-card-padding) + var(--lesson-card-toggle-width) + 1px) * -1)
+  );
+}
+
+.lesson-card-split.is-plan-collapsed .lesson-card-divider::before,
+.lesson-card-split.is-plan-collapsed .lesson-card-divider::after {
+  opacity: 0;
 }
 
 .lesson-card-plan-toggle {
@@ -430,6 +437,7 @@
   min-height: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   transition: padding-left 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -441,11 +449,15 @@
   width: 100%;
   min-height: 0;
   align-self: center;
+  justify-self: center;
   display: grid;
+  justify-items: center;
   gap: clamp(0.72rem, 1.8cqw, 1.08rem);
+  margin-inline: auto;
 }
 
 .lesson-card-video-meta {
+  width: 100%;
   min-width: 0;
   display: grid;
   gap: clamp(0.18rem, 0.48cqw, 0.28rem);
@@ -455,6 +467,7 @@
 
 .lesson-card-video-title {
   margin: 0;
+  width: 100%;
   min-width: 0;
   font-family: var(--font-display);
   font-size: clamp(1.77rem, 4.05cqw, 2.52rem);
@@ -466,6 +479,7 @@
 
 .lesson-card-video-author {
   margin: 0;
+  width: 100%;
   min-width: 0;
   font-family: var(--font-body);
   font-size: clamp(0.82rem, 1.9vw, 0.98rem);
@@ -529,6 +543,8 @@ a.lesson-card-video-author:focus-visible {
 
 .lesson-card-player-shell {
   width: 100%;
+  box-sizing: border-box;
+  justify-self: center;
   min-height: 0;
   border: var(--frame-strong);
   border-radius: 0.45rem;
