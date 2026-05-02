@@ -167,7 +167,7 @@
 .lesson-card-plan-title {
   min-width: 0;
   font-family: var(--font-body);
-  font-size: clamp(0.7rem, 1.55cqw, 0.9rem);
+  font-size: clamp(0.78rem, 1.78cqw, 1.02rem);
   line-height: 1.15;
   font-weight: 600;
   opacity: 0.9;
