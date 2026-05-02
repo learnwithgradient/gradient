@@ -312,11 +312,14 @@ function LessonCard({ lesson, dealIndex = null }) {
             aria-label={isPlanCollapsed ? "Show lesson plan" : "Hide lesson plan"}
             onClick={handlePlanToggle}
           >
-            <span className="lesson-card-plan-toggle-icon lesson-card-plan-toggle-icon-left">
-              <MdChevronLeft aria-hidden="true" focusable="false" />
-            </span>
-            <span className="lesson-card-plan-toggle-icon lesson-card-plan-toggle-icon-right">
-              <MdChevronRight aria-hidden="true" focusable="false" />
+            <span className="lesson-card-plan-toggle-shape" aria-hidden="true">
+              <span className="lesson-card-plan-toggle-icon">
+                {isPlanCollapsed ? (
+                  <MdChevronRight focusable="false" />
+                ) : (
+                  <MdChevronLeft focusable="false" />
+                )}
+              </span>
             </span>
           </button>
         </div>

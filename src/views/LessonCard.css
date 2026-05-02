@@ -3,7 +3,7 @@
   --info-card-gap: clamp(0.38rem, 1cqw, 0.68rem);
   --lesson-card-toggle-width: clamp(1.16rem, 2.65cqw, 1.55rem);
   --lesson-card-toggle-height: clamp(2.28rem, 5.2cqw, 2.98rem);
-  --lesson-card-toggle-squeeze-width: clamp(0.16rem, 0.42cqw, 0.24rem);
+  --lesson-card-toggle-squeeze-width: clamp(0.56rem, 1.25cqw, 0.76rem);
   --lesson-card-toggle-morph-duration: 640ms;
   align-items: stretch;
   justify-content: stretch;
@@ -219,8 +219,7 @@
   overflow: visible;
 }
 
-.lesson-card-plan-toggle::before {
-  content: "";
+.lesson-card-plan-toggle-shape {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -231,13 +230,14 @@
   border-color: var(--text);
   border-radius: 999px 0 0 999px;
   background: var(--text);
+  overflow: hidden;
   will-change: left, width, border-radius;
 }
 
 .lesson-card-plan-toggle-icon {
   position: absolute;
   top: 50%;
-  left: calc(var(--lesson-card-toggle-width) * 0.5);
+  left: 50%;
   z-index: 1;
   display: grid;
   place-items: center;
@@ -257,15 +257,6 @@
   pointer-events: none;
 }
 
-.lesson-card-plan-toggle-icon-left {
-  opacity: 1;
-}
-
-.lesson-card-plan-toggle-icon-right {
-  left: calc(var(--lesson-card-toggle-width) * 1.5);
-  opacity: 0;
-}
-
 .lesson-card-plan-toggle:hover,
 .lesson-card-plan-toggle:focus-visible {
   color: var(--surface);
@@ -275,22 +266,14 @@
   outline: 0;
 }
 
-.lesson-card-plan-toggle:focus-visible::before {
+.lesson-card-plan-toggle:focus-visible .lesson-card-plan-toggle-shape {
   outline: 2px solid var(--text);
   outline-offset: 0.14rem;
 }
 
-.lesson-card-plan-toggle.is-collapsed::before {
+.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-shape {
   left: var(--lesson-card-toggle-width);
   border-radius: 0 999px 999px 0;
-}
-
-.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-icon-left {
-  opacity: 0;
-}
-
-.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-icon-right {
-  opacity: 1;
 }
 
 .lesson-card-plan-toggle.is-collapsed:hover,
@@ -298,30 +281,20 @@
   color: var(--surface);
 }
 
-.lesson-card-plan-toggle.is-morphing-to-collapsed::before {
+.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-shape {
   animation: lesson-card-toggle-squeeze-to-right var(--lesson-card-toggle-morph-duration)
     cubic-bezier(0.19, 1, 0.22, 1) both;
 }
 
-.lesson-card-plan-toggle.is-morphing-to-expanded::before {
+.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-shape {
   animation: lesson-card-toggle-squeeze-to-left var(--lesson-card-toggle-morph-duration)
     cubic-bezier(0.19, 1, 0.22, 1) both;
 }
 
-.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-icon-left {
-  animation: lesson-card-toggle-icon-fade-out var(--lesson-card-toggle-morph-duration) ease both;
-}
-
-.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-icon-right {
-  animation: lesson-card-toggle-icon-fade-in var(--lesson-card-toggle-morph-duration) ease both;
-}
-
-.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-icon-left {
-  animation: lesson-card-toggle-icon-fade-in var(--lesson-card-toggle-morph-duration) ease both;
-}
-
-.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-icon-right {
-  animation: lesson-card-toggle-icon-fade-out var(--lesson-card-toggle-morph-duration) ease both;
+.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-icon,
+.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-icon {
+  animation: lesson-card-toggle-icon-squeeze var(--lesson-card-toggle-morph-duration)
+    cubic-bezier(0.19, 1, 0.22, 1) both;
 }
 
 @keyframes lesson-card-toggle-squeeze-to-right {
@@ -339,7 +312,7 @@
 
   38% {
     left: calc(var(--lesson-card-toggle-width) - (var(--lesson-card-toggle-squeeze-width) * 0.55));
-    width: calc(var(--lesson-card-toggle-squeeze-width) * 0.72);
+    width: var(--lesson-card-toggle-squeeze-width);
     border-radius: 0;
   }
 
@@ -377,7 +350,7 @@
 
   38% {
     left: calc(var(--lesson-card-toggle-width) - (var(--lesson-card-toggle-squeeze-width) * 0.15));
-    width: calc(var(--lesson-card-toggle-squeeze-width) * 0.72);
+    width: var(--lesson-card-toggle-squeeze-width);
     border-radius: 0;
   }
 
@@ -400,27 +373,29 @@
   }
 }
 
-@keyframes lesson-card-toggle-icon-fade-out {
-  0%,
-  30% {
-    opacity: 1;
+@keyframes lesson-card-toggle-icon-squeeze {
+  0% {
+    transform: translate(-50%, -50%) scaleX(1) scaleY(1);
   }
 
-  50%,
+  14% {
+    transform: translate(-50%, -50%) scaleX(1.12) scaleY(0.96);
+  }
+
+  38% {
+    transform: translate(-50%, -50%) scaleX(0.56) scaleY(1.12);
+  }
+
+  62% {
+    transform: translate(-50%, -50%) scaleX(1.16) scaleY(0.92);
+  }
+
+  80% {
+    transform: translate(-50%, -50%) scaleX(0.92) scaleY(1.05);
+  }
+
   100% {
-    opacity: 0;
-  }
-}
-
-@keyframes lesson-card-toggle-icon-fade-in {
-  0%,
-  54% {
-    opacity: 0;
-  }
-
-  78%,
-  100% {
-    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1) scaleY(1);
   }
 }
 
