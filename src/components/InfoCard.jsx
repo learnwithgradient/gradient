@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 const FULLSCREEN_IGNORE_SELECTOR =
   "a, button, input, textarea, select, label, iframe, video, audio, [role='button'], [contenteditable='true']";
@@ -35,6 +35,14 @@ function generateCardTilt(dealIndex) {
   return (magnitude * direction).toFixed(2);
 }
 
+function clearActiveTextSelection() {
+  window.getSelection?.()?.removeAllRanges();
+}
+
+function shouldIgnoreFullscreenEvent(event) {
+  return event.target instanceof Element && event.target.closest(FULLSCREEN_IGNORE_SELECTOR);
+}
+
 export function useInfoCardDealStyle(dealIndex = null) {
   const cardTilt = useMemo(() => generateCardTilt(dealIndex), [dealIndex]);
 
@@ -57,6 +65,7 @@ function InfoCard({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenMotion, setFullscreenMotion] = useState(null);
   const [hasEntered, setHasEntered] = useState(false);
+  const handledDoubleClickMouseDownRef = useRef(false);
   const screenClassNames = [
     "info-card-screen",
     screenClassName,
@@ -110,17 +119,48 @@ function InfoCard({
     setFullscreenMotion("exiting");
   };
 
-  const handleCardDoubleClick = (event) => {
-    if (event.target.closest(FULLSCREEN_IGNORE_SELECTOR)) {
-      return;
-    }
+  const toggleFullscreen = () => {
+    clearActiveTextSelection();
 
     if (isFullscreen) {
       exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+
+    window.requestAnimationFrame(clearActiveTextSelection);
+  };
+
+  const handleCardMouseDown = (event) => {
+    if (event.detail <= 1 || shouldIgnoreFullscreenEvent(event)) {
       return;
     }
 
-    enterFullscreen();
+    event.preventDefault();
+
+    if (event.detail === 2) {
+      handledDoubleClickMouseDownRef.current = true;
+      toggleFullscreen();
+      return;
+    }
+
+    clearActiveTextSelection();
+  };
+
+  const handleCardDoubleClick = (event) => {
+    if (shouldIgnoreFullscreenEvent(event)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (handledDoubleClickMouseDownRef.current) {
+      handledDoubleClickMouseDownRef.current = false;
+      clearActiveTextSelection();
+      return;
+    }
+
+    toggleFullscreen();
   };
 
   useEffect(() => {
@@ -148,6 +188,7 @@ function InfoCard({
         role={role}
         aria-label={ariaLabel}
         style={cardStyle}
+        onMouseDown={handleCardMouseDown}
         onDoubleClick={handleCardDoubleClick}
       >
         {children}
