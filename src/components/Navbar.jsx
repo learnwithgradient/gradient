@@ -14,6 +14,7 @@ import MissionPage from "../views/MissionPage";
 import ContactPage from "../views/ContactPage";
 import DonatePage from "../views/DonatePage";
 import PageNotFound from "../views/PageNotFound";
+import VideoLessonCard from "../views/VideoLessonCard";
 import SectionNav from "./SectionNav";
 import TopicLayer from "./TopicLayer";
 
@@ -41,6 +42,7 @@ const STACKABLE_ROUTE_STATUSES = new Set([
   "contact",
   "donate",
   "account",
+  "lesson",
   "coming-soon",
   "not-found",
 ]);
@@ -118,13 +120,14 @@ function resolvePathStatus(pathname) {
     return { status: "not-found", matchedLesson: null };
   }
 
-  return { status: "coming-soon", matchedLesson };
+  return { status: "lesson", matchedLesson };
 }
 
 function Navbar({ initialPathname: initialPathnameProp = null }) {
   const initialPathname =
     initialPathnameProp ?? (typeof window === "undefined" ? "/" : window.location.pathname);
-  const initialRouteStatus = resolvePathStatus(initialPathname).status;
+  const initialRoute = resolvePathStatus(initialPathname);
+  const initialRouteStatus = initialRoute.status;
   const [topicTransitionMode] = useState(resolveTopicTransitionMode);
   const [screenPhase, setScreenPhase] = useState("closed");
   const [selectedSection, setSelectedSection] = useState(PROJECTOR_SECTIONS[0]);
@@ -142,6 +145,7 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
       id: 0,
       status: initialRouteStatus,
       path: stripBasePath(initialPathname) || "/",
+      lesson: initialRoute.matchedLesson,
     },
   ]);
 
@@ -454,7 +458,7 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
         const topId = topCard ? topCard.id : -1;
         const nextCards = [
           ...currentCards,
-          { id: topId + 1, status, path },
+          { id: topId + 1, status, path, lesson: matchedLesson },
         ];
         return nextCards.slice(-MAX_DEALT_CARDS);
       });
@@ -855,10 +859,14 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
             {card.status === "account" && (
               <PageNotFound isComingSoon={true} dealIndex={card.id} />
             )}
+            {card.status === "lesson" && (
+              <VideoLessonCard lesson={card.lesson} dealIndex={card.id} />
+            )}
             {card.status !== "home" &&
               card.status !== "mission" &&
               card.status !== "contact" &&
               card.status !== "account" &&
+              card.status !== "lesson" &&
               card.status !== "donate" && (
                 <PageNotFound isComingSoon={card.status === "coming-soon"} dealIndex={card.id} />
               )}
