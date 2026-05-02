@@ -232,7 +232,7 @@
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 3px;
+  width: 2px;
   transform: translateX(-50%);
   border-radius: 999px;
   background: var(--line);
