@@ -10,28 +10,46 @@ function getVideoDisplayTitle(video, metadataByWatchUrl, lesson) {
   return metadataByWatchUrl[video.watchUrl]?.title ?? video.fallbackTitle ?? lesson.subtopic;
 }
 
+function getLessonPlanEntryLabel(entry) {
+  switch (entry.kind) {
+    case "document":
+      return "Document";
+    case "problem-set":
+      return "Problem Set";
+    case "lab-problem":
+      return "Lab Problem";
+    case "video":
+    default:
+      return "Video";
+  }
+}
+
 function buildPlaceholderPlaylist(lesson) {
   return [
     {
       id: "part-1",
+      kind: "video",
       watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
       fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=0`,
     },
     {
       id: "part-2",
+      kind: "video",
       watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
       fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=90`,
     },
     {
       id: "part-3",
+      kind: "video",
       watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
       fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=210`,
     },
     {
       id: "part-4",
+      kind: "video",
       watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
       fallbackTitle: lesson.subtopic,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=330`,
@@ -192,16 +210,14 @@ function LessonCard({ lesson, dealIndex = null }) {
                     type="button"
                     className={`lesson-card-plan-item${isActive ? " is-active" : ""}`}
                     aria-pressed={isActive}
+                    aria-label={`${index}. ${getLessonPlanEntryLabel(video)}`}
                     onClick={() => setSelectedVideoId(video.id)}
                   >
                     <span className="lesson-card-plan-index" aria-hidden="true">
                       {index}
                     </span>
-                    <span
-                      className="lesson-card-plan-title"
-                      title={getVideoDisplayTitle(video, metadataByWatchUrl, lesson)}
-                    >
-                      {getVideoDisplayTitle(video, metadataByWatchUrl, lesson)}
+                    <span className="lesson-card-plan-title" title={getLessonPlanEntryLabel(video)}>
+                      {getLessonPlanEntryLabel(video)}
                     </span>
                   </button>
                 );
