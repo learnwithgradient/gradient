@@ -9,6 +9,7 @@ const PLACEHOLDER_VIDEO_BASE_SRC =
   "https://www.youtube.com/embed/aircAruvnKk?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&modestbranding=1&rel=0";
 const DOCUMENT_PLACEHOLDER_TITLE = "Document Placeholder Title";
 const DOCUMENT_PLACEHOLDER_BODY = "Document body text placeholder.";
+const SCROLL_FADE_EDGE_TOLERANCE_PX = 2;
 
 function getVideoDisplayTitle(video, metadataByWatchUrl, lesson) {
   return metadataByWatchUrl[video.watchUrl]?.title ?? video.fallbackTitle ?? lesson.subtopic;
@@ -357,10 +358,11 @@ function LessonCard({ lesson, dealIndex = null, onLessonNavigate = null }) {
       cancelAnimationFrame(frameId);
       frameId = requestAnimationFrame(() => {
         const { scrollTop, clientHeight, scrollHeight } = scroller;
-        const hasOverflow = scrollHeight - clientHeight > 1;
+        const remainingScroll = scrollHeight - clientHeight - scrollTop;
+        const hasOverflow = scrollHeight - clientHeight > SCROLL_FADE_EDGE_TOLERANCE_PX;
         const nextFadeState = {
-          top: hasOverflow && scrollTop > 0,
-          bottom: hasOverflow && scrollTop + clientHeight < scrollHeight,
+          top: hasOverflow && scrollTop > SCROLL_FADE_EDGE_TOLERANCE_PX,
+          bottom: hasOverflow && remainingScroll > SCROLL_FADE_EDGE_TOLERANCE_PX,
         };
 
         setPlanFadeState((currentFadeState) =>
