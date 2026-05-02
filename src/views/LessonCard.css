@@ -254,8 +254,6 @@
 }
 
 .lesson-card-plan-toggle {
-  --lesson-card-toggle-slide-y: 0rem;
-  --lesson-card-toggle-hover-y: 0rem;
   appearance: none;
   position: absolute;
   left: 0;
@@ -271,13 +269,10 @@
   background: var(--text);
   color: var(--surface);
   cursor: pointer;
-  transform: translateY(calc(var(--lesson-card-toggle-slide-y) + var(--lesson-card-toggle-hover-y)));
   overflow: hidden;
   z-index: 101;
   box-shadow: var(--underlay-shadow-sm);
-  transition:
-    transform 560ms cubic-bezier(0.18, 1.22, 0.22, 1),
-    background-color 180ms ease;
+  transition: background-color 180ms ease;
 }
 
 .lesson-card.is-card-fullscreen {
@@ -312,11 +307,6 @@
   transform: translate(-50%, -50%) rotate(180deg);
 }
 
-.lesson-card-plan-toggle:hover,
-.lesson-card-plan-toggle:focus-visible {
-  --lesson-card-toggle-hover-y: -0.06rem;
-}
-
 .lesson-card-plan-toggle:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 0.16rem;
@@ -331,15 +321,6 @@
   container-type: inline-size;
   overflow: visible;
   transition: padding-left 420ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .lesson-card:not(:hover) .lesson-card-plan-toggle {
-    --lesson-card-toggle-slide-y: calc(
-      var(--lesson-card-toggle-size) + var(--info-card-padding) + 0.45rem
-    );
-    pointer-events: none;
-  }
 }
 
 .lesson-card-split.is-plan-collapsed .lesson-card-content-pane {
