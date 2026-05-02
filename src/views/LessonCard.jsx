@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
-import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { MdChevronLeft } from "react-icons/md";
 import InfoCard from "../components/InfoCard";
 
 const PLACEHOLDER_VIDEO_WATCH_URL =
@@ -183,7 +183,6 @@ function LessonCard({ lesson, dealIndex = null }) {
   const [selectedVideoId, setSelectedVideoId] = useState(playlist[0]?.id ?? null);
   const [metadataByWatchUrl, setMetadataByWatchUrl] = useState({});
   const [isPlanCollapsed, setIsPlanCollapsed] = useState(false);
-  const [toggleMorphDirection, setToggleMorphDirection] = useState(null);
   const planScrollerRef = useRef(null);
   const planRegionId = useId();
   const [planFadeState, setPlanFadeState] = useState({ top: false, bottom: false });
@@ -191,18 +190,6 @@ function LessonCard({ lesson, dealIndex = null }) {
   useEffect(() => {
     setSelectedVideoId(playlist[0]?.id ?? null);
   }, [playlist]);
-
-  useEffect(() => {
-    if (!toggleMorphDirection) {
-      return undefined;
-    }
-
-    const morphTimeoutId = window.setTimeout(() => {
-      setToggleMorphDirection(null);
-    }, 700);
-
-    return () => window.clearTimeout(morphTimeoutId);
-  }, [toggleMorphDirection]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -312,15 +299,12 @@ function LessonCard({ lesson, dealIndex = null }) {
   const toggleClassName = [
     "lesson-card-plan-toggle",
     isPlanCollapsed ? "is-collapsed" : "",
-    toggleMorphDirection ? `is-morphing-${toggleMorphDirection}` : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   const handlePlanToggle = () => {
-    const nextIsPlanCollapsed = !isPlanCollapsed;
-    setToggleMorphDirection(nextIsPlanCollapsed ? "to-collapsed" : "to-expanded");
-    setIsPlanCollapsed(nextIsPlanCollapsed);
+    setIsPlanCollapsed((currentIsPlanCollapsed) => !currentIsPlanCollapsed);
   };
 
   return (
@@ -363,7 +347,9 @@ function LessonCard({ lesson, dealIndex = null }) {
           </div>
         </aside>
 
-        <div className="lesson-card-divider">
+        <div className="lesson-card-divider" aria-hidden="true" />
+
+        <section className="lesson-card-content-pane">
           <button
             type="button"
             className={toggleClassName}
@@ -372,19 +358,11 @@ function LessonCard({ lesson, dealIndex = null }) {
             aria-label={isPlanCollapsed ? "Show lesson plan" : "Hide lesson plan"}
             onClick={handlePlanToggle}
           >
-            <span className="lesson-card-plan-toggle-shape" aria-hidden="true">
-              <span className="lesson-card-plan-toggle-icon">
-                {isPlanCollapsed ? (
-                  <MdChevronRight focusable="false" />
-                ) : (
-                  <MdChevronLeft focusable="false" />
-                )}
-              </span>
+            <span className="lesson-card-plan-toggle-icon" aria-hidden="true">
+              <MdChevronLeft focusable="false" />
             </span>
           </button>
-        </div>
 
-        <section className="lesson-card-content-pane">
           <LessonContent
             entry={selectedEntry}
             metadataByWatchUrl={metadataByWatchUrl}

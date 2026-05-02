@@ -1,15 +1,11 @@
 .lesson-card {
   --info-card-padding: clamp(0.58rem, 1.8cqw, 1.05rem);
   --info-card-gap: clamp(0.38rem, 1cqw, 0.68rem);
-  --lesson-card-toggle-width: clamp(1.16rem, 2.65cqw, 1.55rem);
-  --lesson-card-toggle-height: clamp(2.28rem, 5.2cqw, 2.98rem);
-  --lesson-card-toggle-squeeze-width: clamp(0.56rem, 1.25cqw, 0.76rem);
-  --lesson-card-toggle-morph-duration: 640ms;
-  --lesson-card-toggle-icon-inset: clamp(0.04rem, 0.22cqw, 0.12rem);
+  --lesson-card-toggle-size: clamp(1.38rem, 3.05cqw, 1.76rem);
   align-items: stretch;
   justify-content: stretch;
   text-align: left;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .lesson-card-split {
@@ -210,8 +206,8 @@
 
 .lesson-card-divider {
   width: 1px;
-  height: calc(100% + (var(--info-card-padding) * 2));
-  margin-top: calc(var(--info-card-padding) * -1);
+  height: 100%;
+  margin-top: 0;
   position: relative;
   z-index: 3;
   isolation: isolate;
@@ -226,7 +222,7 @@
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.18);
+  background: var(--line);
   z-index: 5;
 }
 
@@ -239,7 +235,7 @@
   width: 3px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--line);
   pointer-events: none;
   z-index: 8;
 }
@@ -254,58 +250,41 @@
 }
 
 .lesson-card-plan-toggle {
+  --lesson-card-toggle-slide-y: 0rem;
+  --lesson-card-toggle-hover-y: 0rem;
   appearance: none;
   position: absolute;
-  left: calc(var(--lesson-card-toggle-width) * -1);
-  bottom: clamp(0.3rem, 1cqw, 0.58rem);
-  width: calc(var(--lesson-card-toggle-width) * 2);
-  height: var(--lesson-card-toggle-height);
+  left: 0;
+  bottom: 0;
+  width: var(--lesson-card-toggle-size);
+  height: var(--lesson-card-toggle-size);
   padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  border: var(--frame-strong);
+  border-radius: 999px;
+  background: var(--text);
   color: var(--surface);
   cursor: pointer;
-  transform: none;
-  overflow: visible;
-  z-index: 6;
-  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.lesson-card-plan-toggle.is-collapsed {
-  transform: translateY(calc(var(--info-card-padding) * -0.52));
-}
-
-.lesson-card-plan-toggle-shape {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: var(--lesson-card-toggle-width);
-  box-sizing: border-box;
-  border: var(--frame-strong);
-  border-color: var(--text);
-  border-radius: 999px 0 0 999px;
-  background: var(--text);
+  transform: translateY(calc(var(--lesson-card-toggle-slide-y) + var(--lesson-card-toggle-hover-y)));
   overflow: hidden;
-  will-change: left, width, border-radius;
+  z-index: 4;
+  box-shadow: var(--underlay-shadow-sm);
+  transition:
+    transform 560ms cubic-bezier(0.18, 1.22, 0.22, 1),
+    background-color 180ms ease;
 }
 
 .lesson-card-plan-toggle-icon {
   position: absolute;
   top: 50%;
-  left: calc(50% + var(--lesson-card-toggle-icon-inset));
+  left: 50%;
   z-index: 1;
   display: grid;
   place-items: center;
-  width: clamp(1.08rem, 2.85cqw, 1.42rem);
-  height: clamp(1.08rem, 2.85cqw, 1.42rem);
-  transform: translate(-50%, -50%);
+  width: clamp(1rem, 2.45cqw, 1.32rem);
+  height: clamp(1rem, 2.45cqw, 1.32rem);
+  transform: translate(-50%, -50%) rotate(0deg);
   pointer-events: none;
-}
-
-.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-icon {
-  left: calc(50% - var(--lesson-card-toggle-icon-inset));
+  transition: transform 360ms cubic-bezier(0.2, 0.85, 0.18, 1);
 }
 
 .lesson-card-plan-toggle-icon svg {
@@ -318,154 +297,36 @@
   pointer-events: none;
 }
 
+.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-icon {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+
 .lesson-card-plan-toggle:hover,
 .lesson-card-plan-toggle:focus-visible {
-  color: var(--surface);
+  --lesson-card-toggle-hover-y: -0.06rem;
 }
 
 .lesson-card-plan-toggle:focus-visible {
-  outline: 0;
-}
-
-.lesson-card-plan-toggle:focus-visible .lesson-card-plan-toggle-shape {
   outline: 2px solid var(--text);
-  outline-offset: 0.14rem;
-}
-
-.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-shape {
-  left: var(--lesson-card-toggle-width);
-  border-radius: 0 999px 999px 0;
-}
-
-.lesson-card-plan-toggle.is-collapsed:hover,
-.lesson-card-plan-toggle.is-collapsed:focus-visible {
-  color: var(--surface);
-}
-
-.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-shape {
-  animation: lesson-card-toggle-squeeze-to-right var(--lesson-card-toggle-morph-duration)
-    cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-
-.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-shape {
-  animation: lesson-card-toggle-squeeze-to-left var(--lesson-card-toggle-morph-duration)
-    cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-
-.lesson-card-plan-toggle.is-morphing-to-collapsed .lesson-card-plan-toggle-icon,
-.lesson-card-plan-toggle.is-morphing-to-expanded .lesson-card-plan-toggle-icon {
-  animation: lesson-card-toggle-icon-squeeze var(--lesson-card-toggle-morph-duration)
-    cubic-bezier(0.19, 1, 0.22, 1) both;
-}
-
-@keyframes lesson-card-toggle-squeeze-to-right {
-  0% {
-    left: 0;
-    width: var(--lesson-card-toggle-width);
-    border-radius: 999px 0 0 999px;
-  }
-
-  14% {
-    left: calc(var(--lesson-card-toggle-width) * -0.08);
-    width: calc(var(--lesson-card-toggle-width) * 1.12);
-    border-radius: 999px 0 0 999px;
-  }
-
-  38% {
-    left: calc(var(--lesson-card-toggle-width) - (var(--lesson-card-toggle-squeeze-width) * 0.55));
-    width: var(--lesson-card-toggle-squeeze-width);
-    border-radius: 0;
-  }
-
-  62% {
-    left: calc(var(--lesson-card-toggle-width) * 0.88);
-    width: calc(var(--lesson-card-toggle-width) * 1.16);
-    border-radius: 0 999px 999px 0;
-  }
-
-  80% {
-    left: calc(var(--lesson-card-toggle-width) * 1.04);
-    width: calc(var(--lesson-card-toggle-width) * 0.92);
-    border-radius: 0 999px 999px 0;
-  }
-
-  100% {
-    left: var(--lesson-card-toggle-width);
-    width: var(--lesson-card-toggle-width);
-    border-radius: 0 999px 999px 0;
-  }
-}
-
-@keyframes lesson-card-toggle-squeeze-to-left {
-  0% {
-    left: var(--lesson-card-toggle-width);
-    width: var(--lesson-card-toggle-width);
-    border-radius: 0 999px 999px 0;
-  }
-
-  14% {
-    left: calc(var(--lesson-card-toggle-width) * 0.96);
-    width: calc(var(--lesson-card-toggle-width) * 1.12);
-    border-radius: 0 999px 999px 0;
-  }
-
-  38% {
-    left: calc(var(--lesson-card-toggle-width) - (var(--lesson-card-toggle-squeeze-width) * 0.15));
-    width: var(--lesson-card-toggle-squeeze-width);
-    border-radius: 0;
-  }
-
-  62% {
-    left: calc(var(--lesson-card-toggle-width) * -0.12);
-    width: calc(var(--lesson-card-toggle-width) * 1.16);
-    border-radius: 999px 0 0 999px;
-  }
-
-  80% {
-    left: calc(var(--lesson-card-toggle-width) * 0.06);
-    width: calc(var(--lesson-card-toggle-width) * 0.92);
-    border-radius: 999px 0 0 999px;
-  }
-
-  100% {
-    left: 0;
-    width: var(--lesson-card-toggle-width);
-    border-radius: 999px 0 0 999px;
-  }
-}
-
-@keyframes lesson-card-toggle-icon-squeeze {
-  0% {
-    transform: translate(-50%, -50%) scaleX(1) scaleY(1);
-  }
-
-  14% {
-    transform: translate(-50%, -50%) scaleX(1.12) scaleY(0.96);
-  }
-
-  38% {
-    transform: translate(-50%, -50%) scaleX(0.56) scaleY(1.12);
-  }
-
-  62% {
-    transform: translate(-50%, -50%) scaleX(1.16) scaleY(0.92);
-  }
-
-  80% {
-    transform: translate(-50%, -50%) scaleX(0.92) scaleY(1.05);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scaleX(1) scaleY(1);
-  }
+  outline-offset: 0.16rem;
 }
 
 .lesson-card-content-pane {
+  position: relative;
   min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: padding-left 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lesson-card:not(:hover) .lesson-card-plan-toggle {
+    --lesson-card-toggle-slide-y: calc(
+      var(--lesson-card-toggle-size) + var(--info-card-padding) + 0.45rem
+    );
+    pointer-events: none;
+  }
 }
 
 .lesson-card-split.is-plan-collapsed .lesson-card-content-pane {
