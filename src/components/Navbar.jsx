@@ -14,7 +14,7 @@ import MissionPage from "../views/MissionPage";
 import ContactPage from "../views/ContactPage";
 import DonatePage from "../views/DonatePage";
 import PageNotFound from "../views/PageNotFound";
-import VideoLessonCard from "../views/VideoLessonCard";
+import LessonCard from "../views/LessonCard";
 import SectionNav from "./SectionNav";
 import TopicLayer from "./TopicLayer";
 
@@ -860,7 +860,7 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
               <PageNotFound isComingSoon={true} dealIndex={card.id} />
             )}
             {card.status === "lesson" && (
-              <VideoLessonCard lesson={card.lesson} dealIndex={card.id} />
+              <LessonCard lesson={card.lesson} dealIndex={card.id} />
             )}
             {card.status !== "home" &&
               card.status !== "mission" &&

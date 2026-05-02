@@ -3,43 +3,34 @@ import InfoCard from "../components/InfoCard";
 
 const PLACEHOLDER_VIDEO_BASE_SRC =
   "https://www.youtube.com/embed/aircAruvnKk?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&modestbranding=1&rel=0";
+const PLACEHOLDER_VIDEO_TITLE = "But what is a neural network? | Deep learning chapter 1";
 
 function buildPlaceholderPlaylist(lesson) {
-  const lessonLabel = lesson?.subtopic ?? "Lesson";
-
   return [
     {
       id: "part-1",
-      playlistLabel: "Video 1",
-      title: `${lessonLabel} Overview`,
-      description: "Introductory placeholder clip for this lesson card layout.",
+      title: PLACEHOLDER_VIDEO_TITLE,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=0`,
     },
     {
       id: "part-2",
-      playlistLabel: "Video 2",
-      title: `${lessonLabel} Intuition`,
-      description: "Second placeholder clip slot for a more visual walk-through.",
+      title: PLACEHOLDER_VIDEO_TITLE,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=90`,
     },
     {
       id: "part-3",
-      playlistLabel: "Video 3",
-      title: `${lessonLabel} Worked Example`,
-      description: "Third placeholder clip slot for a concrete example or exercise.",
+      title: PLACEHOLDER_VIDEO_TITLE,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=210`,
     },
     {
       id: "part-4",
-      playlistLabel: "Video 4",
-      title: `${lessonLabel} Recap`,
-      description: "Fourth placeholder clip slot for recap, summary, or next steps.",
+      title: PLACEHOLDER_VIDEO_TITLE,
       embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=330`,
     },
   ];
 }
 
-function VideoLessonCard({ lesson, dealIndex = null }) {
+function LessonCard({ lesson, dealIndex = null }) {
   if (!lesson) {
     return null;
   }
@@ -59,15 +50,15 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
 
   return (
     <InfoCard
-      screenClassName="video-lesson-screen"
-      cardClassName="video-lesson-card"
-      ariaLabel={`${lesson.subtopic} lesson video`}
+      screenClassName="lesson-card-screen"
+      cardClassName="lesson-card"
+      ariaLabel={`${lesson.subtopic} lesson card`}
       dealIndex={dealIndex}
     >
-      <div className="video-lesson-split">
-        <aside className="video-lesson-playlist-pane" aria-label="Lesson video playlist">
-          <p className="video-lesson-pane-label">Lesson Plan</p>
-          <div className="video-lesson-playlist-scroller">
+      <div className="lesson-card-split">
+        <aside className="lesson-card-plan-pane" aria-label="Lesson plan">
+          <p className="lesson-card-pane-label">Lesson Plan</p>
+          <div className="lesson-card-plan-scroller">
             {playlist.map((video, index) => {
               const isActive = video.id === selectedVideo?.id;
 
@@ -75,16 +66,15 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
                 <button
                   key={video.id}
                   type="button"
-                  className={`video-lesson-playlist-item${isActive ? " is-active" : ""}`}
+                  className={`lesson-card-plan-item${isActive ? " is-active" : ""}`}
                   aria-pressed={isActive}
                   onClick={() => setSelectedVideoId(video.id)}
                 >
-                  <span className="video-lesson-playlist-index">
-                    {String(index + 1).padStart(2, "0")}
+                  <span className="lesson-card-plan-icon" aria-hidden="true">
+                    <span className="lesson-card-plan-icon-triangle" />
                   </span>
-                  <span className="video-lesson-playlist-text">
-                    <span className="video-lesson-playlist-label">{video.playlistLabel}</span>
-                    <span className="video-lesson-playlist-title">{video.title}</span>
+                  <span className="lesson-card-plan-title" title={video.title}>
+                    {video.title}
                   </span>
                 </button>
               );
@@ -92,24 +82,24 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
           </div>
         </aside>
 
-        <div className="video-lesson-divider" aria-hidden="true" />
+        <div className="lesson-card-divider" aria-hidden="true" />
 
-        <section className="video-lesson-content-pane">
-          <p className="video-lesson-breadcrumb">
+        <section className="lesson-card-content-pane">
+          <p className="lesson-card-breadcrumb">
             <span>{lesson.section}</span>
-            <span className="video-lesson-breadcrumb-separator" aria-hidden="true">
+            <span className="lesson-card-breadcrumb-separator" aria-hidden="true">
               •
             </span>
             <span>{lesson.topic}</span>
-            <span className="video-lesson-breadcrumb-separator" aria-hidden="true">
+            <span className="lesson-card-breadcrumb-separator" aria-hidden="true">
               •
             </span>
             <span>{lesson.subtopic}</span>
           </p>
 
-          <div className="video-lesson-player-shell">
+          <div className="lesson-card-player-shell">
             <iframe
-              className="video-lesson-player"
+              className="lesson-card-player"
               src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
               title={`${selectedVideo?.title ?? lesson.subtopic} placeholder lesson video`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -123,4 +113,4 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
   );
 }
 
-export default VideoLessonCard;
+export default LessonCard;
