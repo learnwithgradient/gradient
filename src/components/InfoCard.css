@@ -55,6 +55,8 @@
 }
 
 .info-card-shell.is-card-fullscreen {
+  position: relative;
+  z-index: 100;
   width: calc(100vw + (var(--info-card-fullscreen-bleed) * 2));
   height: calc(100vh - var(--screen-closed-height) + (var(--info-card-fullscreen-bleed) * 2));
   flex: 0 0 auto;
