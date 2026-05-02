@@ -20,6 +20,7 @@
   display: grid;
   grid-template-rows: auto 1fr;
   gap: clamp(0.14rem, 0.45cqw, 0.28rem);
+  container-type: inline-size;
 }
 
 .lesson-card-pane-label {
@@ -33,13 +34,43 @@
   color: var(--text-fade);
 }
 
+.lesson-card-plan-scroll-shell {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.lesson-card-plan-scroll-shell::before,
+.lesson-card-plan-scroll-shell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: clamp(0.55rem, 12cqi, 0.95rem);
+  pointer-events: none;
+}
+
+.lesson-card-plan-scroll-shell::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--surface) 18%, rgba(246, 241, 232, 0));
+}
+
+.lesson-card-plan-scroll-shell::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--surface) 18%, rgba(246, 241, 232, 0));
+}
+
 .lesson-card-plan-scroller {
   min-height: 0;
+  height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   display: grid;
   align-content: start;
-  gap: clamp(0.14rem, 0.4cqw, 0.24rem);
-  padding-right: 0;
+  gap: clamp(0.12rem, 3.2cqi, 0.22rem);
+  padding: clamp(0.22rem, 5cqi, 0.36rem) 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -55,11 +86,11 @@
   background: transparent;
   color: inherit;
   width: 100%;
-  min-height: clamp(2.3rem, 5.2cqw, 2.9rem);
-  padding: clamp(0.2rem, 0.55cqw, 0.3rem) clamp(0.2rem, 0.55cqw, 0.3rem);
+  min-height: clamp(2rem, 34cqi, 2.7rem);
+  padding: clamp(0.16rem, 4.2cqi, 0.26rem) clamp(0.16rem, 4.2cqi, 0.26rem);
   display: flex;
   align-items: center;
-  gap: 0.22rem;
+  gap: clamp(0.16rem, 3.4cqi, 0.22rem);
   text-align: left;
   cursor: pointer;
   transition:
@@ -81,8 +112,8 @@
 
 .lesson-card-plan-icon {
   flex: 0 0 auto;
-  width: clamp(0.9rem, 1.95cqw, 1.08rem);
-  height: clamp(0.9rem, 1.95cqw, 1.08rem);
+  width: clamp(0.76rem, 15cqi, 0.98rem);
+  height: clamp(0.76rem, 15cqi, 0.98rem);
   border-radius: 999px;
   background: currentColor;
   display: inline-flex;
@@ -98,16 +129,16 @@
 .lesson-card-plan-icon-triangle {
   width: 0;
   height: 0;
-  border-top: 0.22rem solid transparent;
-  border-bottom: 0.22rem solid transparent;
-  border-left: 0.34rem solid var(--surface);
-  margin-left: 0.06rem;
+  border-top: clamp(0.14rem, 2.9cqi, 0.2rem) solid transparent;
+  border-bottom: clamp(0.14rem, 2.9cqi, 0.2rem) solid transparent;
+  border-left: clamp(0.22rem, 4.5cqi, 0.3rem) solid var(--surface);
+  margin-left: clamp(0.03rem, 0.8cqi, 0.06rem);
 }
 
 .lesson-card-plan-title {
   min-width: 0;
   font-family: var(--font-body);
-  font-size: clamp(0.56rem, 1.22cqw, 0.69rem);
+  font-size: clamp(0.5rem, 9cqi, 0.66rem);
   line-height: 1.16;
   font-weight: 500;
   opacity: 0.9;

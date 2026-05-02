@@ -58,27 +58,29 @@ function LessonCard({ lesson, dealIndex = null }) {
       <div className="lesson-card-split">
         <aside className="lesson-card-plan-pane" aria-label="Lesson plan">
           <p className="lesson-card-pane-label">Lesson Plan</p>
-          <div className="lesson-card-plan-scroller">
-            {playlist.map((video, index) => {
-              const isActive = video.id === selectedVideo?.id;
+          <div className="lesson-card-plan-scroll-shell">
+            <div className="lesson-card-plan-scroller">
+              {playlist.map((video) => {
+                const isActive = video.id === selectedVideo?.id;
 
-              return (
-                <button
-                  key={video.id}
-                  type="button"
-                  className={`lesson-card-plan-item${isActive ? " is-active" : ""}`}
-                  aria-pressed={isActive}
-                  onClick={() => setSelectedVideoId(video.id)}
-                >
-                  <span className="lesson-card-plan-icon" aria-hidden="true">
-                    <span className="lesson-card-plan-icon-triangle" />
-                  </span>
-                  <span className="lesson-card-plan-title" title={video.title}>
-                    {video.title}
-                  </span>
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={video.id}
+                    type="button"
+                    className={`lesson-card-plan-item${isActive ? " is-active" : ""}`}
+                    aria-pressed={isActive}
+                    onClick={() => setSelectedVideoId(video.id)}
+                  >
+                    <span className="lesson-card-plan-icon" aria-hidden="true">
+                      <span className="lesson-card-plan-icon-triangle" />
+                    </span>
+                    <span className="lesson-card-plan-title" title={video.title}>
+                      {video.title}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </aside>
 
