@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import InfoCard from "../components/InfoCard";
 
 const PLACEHOLDER_VIDEO_WATCH_URL =
@@ -50,6 +50,8 @@ function LessonCard({ lesson, dealIndex = null }) {
   );
   const [selectedVideoId, setSelectedVideoId] = useState(playlist[0]?.id ?? null);
   const [metadataByWatchUrl, setMetadataByWatchUrl] = useState({});
+  const planScrollerRef = useRef(null);
+  const [planFadeState, setPlanFadeState] = useState({ top: false, bottom: false });
 
   useEffect(() => {
     setSelectedVideoId(playlist[0]?.id ?? null);
@@ -108,6 +110,55 @@ function LessonCard({ lesson, dealIndex = null }) {
     };
   }, [playlist, metadataByWatchUrl]);
 
+  useEffect(() => {
+    const scroller = planScrollerRef.current;
+
+    if (!scroller) {
+      return undefined;
+    }
+
+    let frameId = 0;
+
+    const syncFadeState = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(() => {
+        const { scrollTop, clientHeight, scrollHeight } = scroller;
+        const hasOverflow = scrollHeight - clientHeight > 1;
+        const nextFadeState = {
+          top: hasOverflow && scrollTop > 1,
+          bottom: hasOverflow && scrollTop + clientHeight < scrollHeight - 1,
+        };
+
+        setPlanFadeState((currentFadeState) =>
+          currentFadeState.top === nextFadeState.top &&
+          currentFadeState.bottom === nextFadeState.bottom
+            ? currentFadeState
+            : nextFadeState
+        );
+      });
+    };
+
+    syncFadeState();
+
+    scroller.addEventListener("scroll", syncFadeState, { passive: true });
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(syncFadeState);
+    resizeObserver?.observe(scroller);
+    if (scroller.parentElement) {
+      resizeObserver?.observe(scroller.parentElement);
+    }
+
+    window.addEventListener("resize", syncFadeState);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      scroller.removeEventListener("scroll", syncFadeState);
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", syncFadeState);
+    };
+  }, [playlist, metadataByWatchUrl]);
+
   const selectedVideo =
     playlist.find((video) => video.id === selectedVideoId) ?? playlist[0] ?? null;
   const selectedVideoMetadata = selectedVideo
@@ -127,8 +178,12 @@ function LessonCard({ lesson, dealIndex = null }) {
       <div className="lesson-card-split">
         <aside className="lesson-card-plan-pane" aria-label="Lesson plan">
           <p className="lesson-card-pane-label">Lesson Plan</p>
-          <div className="lesson-card-plan-scroll-shell">
-            <div className="lesson-card-plan-scroller">
+          <div
+            className={`lesson-card-plan-scroll-shell${
+              planFadeState.top ? " has-top-fade" : ""
+            }${planFadeState.bottom ? " has-bottom-fade" : ""}`}
+          >
+            <div className="lesson-card-plan-scroller" ref={planScrollerRef}>
               {playlist.map((video, index) => {
                 const isActive = video.id === selectedVideo?.id;
 

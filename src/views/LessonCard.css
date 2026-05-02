@@ -50,6 +50,8 @@
   z-index: 1;
   height: clamp(0.55rem, 12cqi, 0.95rem);
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
 }
 
 .lesson-card-plan-scroll-shell::before {
@@ -60,6 +62,11 @@
 .lesson-card-plan-scroll-shell::after {
   bottom: 0;
   background: linear-gradient(to top, var(--surface) 18%, rgba(246, 241, 232, 0));
+}
+
+.lesson-card-plan-scroll-shell.has-top-fade::before,
+.lesson-card-plan-scroll-shell.has-bottom-fade::after {
+  opacity: 1;
 }
 
 .lesson-card-plan-scroller {
