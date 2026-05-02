@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useRef, useState } from "react";
+import React, { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import InfoCard from "../components/InfoCard";
 
@@ -124,6 +124,7 @@ function LessonCard({ lesson, dealIndex = null }) {
   const [metadataByWatchUrl, setMetadataByWatchUrl] = useState({});
   const [isPlanCollapsed, setIsPlanCollapsed] = useState(false);
   const [toggleMorphDirection, setToggleMorphDirection] = useState(null);
+  const splitRef = useRef(null);
   const planScrollerRef = useRef(null);
   const planRegionId = useId();
   const [planFadeState, setPlanFadeState] = useState({ top: false, bottom: false });
@@ -143,6 +144,68 @@ function LessonCard({ lesson, dealIndex = null }) {
 
     return () => window.clearTimeout(morphTimeoutId);
   }, [toggleMorphDirection]);
+
+  useLayoutEffect(() => {
+    const splitEl = splitRef.current;
+
+    if (!splitEl) {
+      return undefined;
+    }
+
+    const syncToggleYLock = () => {
+      const cardEl = splitEl.closest(".lesson-card");
+      const shapeEl = splitEl.querySelector(".lesson-card-plan-toggle-shape");
+
+      if (!cardEl || !shapeEl) {
+        return;
+      }
+
+      const splitStyles = window.getComputedStyle(splitEl);
+      const cardStyles = window.getComputedStyle(cardEl);
+      const splitWidth = splitEl.getBoundingClientRect().width;
+      const toggleWidth = shapeEl.getBoundingClientRect().width;
+      const columnGap = Number.parseFloat(splitStyles.columnGap) || 0;
+      const cardPadding = Number.parseFloat(cardStyles.paddingLeft) || 0;
+      const cardTilt = Number.parseFloat(cardStyles.getPropertyValue("--info-card-deal-tilt")) || 0;
+      const tiltScale =
+        Number.parseFloat(cardStyles.getPropertyValue("--info-card-rest-tilt-scale")) || 1;
+
+      const expandedSeamX = (splitWidth - 1 - columnGap * 2) * 0.25 + columnGap + 0.5;
+      const collapsedSeamX = -(cardPadding + 1);
+      const expandedCenterX = expandedSeamX - toggleWidth * 0.5;
+      const collapsedCenterX = collapsedSeamX + toggleWidth * 0.5;
+      const activeTiltRadians = ((cardTilt * tiltScale) / 180) * Math.PI;
+      const collapsedYOffset = -(
+        (collapsedCenterX - expandedCenterX) *
+        Math.tan(activeTiltRadians)
+      );
+
+      if (Number.isFinite(collapsedYOffset)) {
+        splitEl.style.setProperty(
+          "--lesson-card-toggle-collapsed-y-lock",
+          `${collapsedYOffset.toFixed(4)}px`
+        );
+      }
+    };
+
+    syncToggleYLock();
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(syncToggleYLock);
+    resizeObserver?.observe(splitEl);
+
+    const cardEl = splitEl.closest(".lesson-card");
+    if (cardEl) {
+      resizeObserver?.observe(cardEl);
+    }
+
+    window.addEventListener("resize", syncToggleYLock);
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", syncToggleYLock);
+    };
+  }, [dealIndex]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -256,6 +319,13 @@ function LessonCard({ lesson, dealIndex = null }) {
   ]
     .filter(Boolean)
     .join(" ");
+  const splitClassName = [
+    "lesson-card-split",
+    isPlanCollapsed ? "is-plan-collapsed" : "",
+    toggleMorphDirection ? "is-plan-morphing" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const handlePlanToggle = () => {
     const nextIsPlanCollapsed = !isPlanCollapsed;
@@ -270,7 +340,7 @@ function LessonCard({ lesson, dealIndex = null }) {
       ariaLabel={`${lesson.subtopic} lesson card`}
       dealIndex={dealIndex}
     >
-      <div className={`lesson-card-split${isPlanCollapsed ? " is-plan-collapsed" : ""}`}>
+      <div className={splitClassName} ref={splitRef}>
         <aside className="lesson-card-plan-pane" id={planRegionId} aria-label="Lesson plan">
           <div
             className={`lesson-card-plan-scroll-shell${
@@ -303,26 +373,26 @@ function LessonCard({ lesson, dealIndex = null }) {
           </div>
         </aside>
 
-        <div className="lesson-card-divider">
-          <button
-            type="button"
-            className={toggleClassName}
-            aria-controls={planRegionId}
-            aria-expanded={!isPlanCollapsed}
-            aria-label={isPlanCollapsed ? "Show lesson plan" : "Hide lesson plan"}
-            onClick={handlePlanToggle}
-          >
-            <span className="lesson-card-plan-toggle-shape" aria-hidden="true">
-              <span className="lesson-card-plan-toggle-icon">
-                {isPlanCollapsed ? (
-                  <MdChevronRight focusable="false" />
-                ) : (
-                  <MdChevronLeft focusable="false" />
-                )}
-              </span>
+        <div className="lesson-card-divider" aria-hidden="true" />
+
+        <button
+          type="button"
+          className={toggleClassName}
+          aria-controls={planRegionId}
+          aria-expanded={!isPlanCollapsed}
+          aria-label={isPlanCollapsed ? "Show lesson plan" : "Hide lesson plan"}
+          onClick={handlePlanToggle}
+        >
+          <span className="lesson-card-plan-toggle-shape" aria-hidden="true">
+            <span className="lesson-card-plan-toggle-icon">
+              {isPlanCollapsed ? (
+                <MdChevronRight focusable="false" />
+              ) : (
+                <MdChevronLeft focusable="false" />
+              )}
             </span>
-          </button>
-        </div>
+          </span>
+        </button>
 
         <section className="lesson-card-content-pane">
           <LessonContent
