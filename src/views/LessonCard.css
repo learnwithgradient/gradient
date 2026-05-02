@@ -180,7 +180,8 @@
 
 .lesson-card-divider {
   width: 1px;
-  height: 100%;
+  height: calc(100% + (var(--info-card-padding) * 2));
+  margin-top: calc(var(--info-card-padding) * -1);
   position: relative;
   z-index: 3;
   isolation: isolate;
@@ -221,9 +222,7 @@
 .lesson-card-split.is-plan-collapsed .lesson-card-divider {
   height: 100%;
   margin-top: 0;
-  transform: translateX(
-    calc((var(--info-card-padding) + var(--lesson-card-toggle-width) + 1px) * -1)
-  );
+  transform: translateX(calc((var(--info-card-padding) + 1px) * -1));
 }
 
 .lesson-card-split.is-plan-collapsed .lesson-card-divider::before,
