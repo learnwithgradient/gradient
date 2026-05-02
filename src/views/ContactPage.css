@@ -8,9 +8,8 @@
 
 .contact-page-card .static-page-meta {
   margin-top: 0;
-  width: fit-content;
-  max-width: 100%;
-  justify-self: end;
+  width: 100%;
+  justify-self: stretch;
   justify-items: center;
   text-align: center;
 }
@@ -34,7 +33,7 @@
 
 @media (max-width: 900px) {
   .contact-page-card .static-page-meta {
-    justify-self: end;
+    justify-self: stretch;
   }
 }
 
