@@ -1,17 +1,21 @@
 import React from "react";
-import InfoCard from "../components/InfoCard";
+import InformationalCard from "./InformationalCard";
 
 function DonatePage({ dealIndex = null }) {
   return (
-    <InfoCard
+    <InformationalCard
       screenClassName="donate-screen"
-      cardClassName="static-page-card donate-page-card"
+      cardClassName="donate-page-card"
       ariaLabel="Donate page"
       dealIndex={dealIndex}
-    >
-      <p className="static-page-eyebrow">Donate</p>
-      <h1 className="static-page-title">Support <i>Gradient.</i></h1>
-      <p className="static-page-body">
+      eyebrow="Donate"
+      title={
+        <>
+          Support <i>Gradient.</i>
+        </>
+      }
+      body={
+        <>
         Thank you for considering a donation to Gradient!
         Right now, this is just a passion project of mine, so there's no need to worry about
         financials. However, if you do want to help people, I recommend donating to organizations
@@ -28,13 +32,16 @@ function DonatePage({ dealIndex = null }) {
           Unbound
         </a>
         .
-      </p>
-      <ul className="static-page-meta">
+        </>
+      }
+      meta={
+        <>
         <li>"The more that you read, the more things you will know. </li>
         <li>The more that you learn, the more places you'll go." </li>
         <li>Dr. Seuss</li>
-      </ul>
-    </InfoCard>
+        </>
+      }
+    />
   );
 }
 
