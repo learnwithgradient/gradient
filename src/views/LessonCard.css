@@ -91,11 +91,12 @@
   background: transparent;
   color: inherit;
   width: 100%;
-  min-height: clamp(2rem, 34cqi, 2.7rem);
-  padding: clamp(0.16rem, 4.2cqi, 0.26rem) clamp(0.16rem, 4.2cqi, 0.26rem);
-  display: flex;
-  align-items: center;
-  gap: clamp(0.16rem, 3.4cqi, 0.22rem);
+  min-height: clamp(2.24rem, 5cqw, 2.95rem);
+  padding: clamp(0.42rem, 1cqw, 0.62rem);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: clamp(0.34rem, 0.85cqw, 0.48rem);
   text-align: left;
   cursor: pointer;
   transition:
@@ -117,22 +118,22 @@
 
 .lesson-card-plan-index {
   flex: 0 0 auto;
-  width: clamp(0.72rem, 14cqi, 0.96rem);
+  width: auto;
   font-family: var(--font-body);
-  font-size: clamp(0.48rem, 8.4cqi, 0.66rem);
-  line-height: 1;
-  letter-spacing: 0.08em;
+  font-size: clamp(0.55rem, 1.2cqw, 0.7rem);
+  line-height: 1.1;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
   color: inherit;
-  opacity: 0.82;
+  opacity: 0.74;
 }
 
 .lesson-card-plan-title {
   min-width: 0;
   font-family: var(--font-body);
-  font-size: clamp(0.5rem, 9cqi, 0.66rem);
-  line-height: 1.16;
+  font-size: clamp(0.62rem, 1.45cqw, 0.82rem);
+  line-height: 1.2;
   font-weight: 500;
   opacity: 0.9;
   display: -webkit-box;
@@ -194,26 +195,25 @@
   min-width: 0;
   font-family: var(--font-display);
   font-size: clamp(1.18rem, 2.95cqw, 1.72rem);
-  line-height: 0.98;
+  line-height: 1.08;
   letter-spacing: 0.01em;
   font-weight: 400;
   color: var(--text);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
+  padding-bottom: 0.08em;
+  display: block;
+  overflow-wrap: anywhere;
 }
 
 .lesson-card-video-author {
   margin: 0;
   min-width: 0;
   font-family: var(--font-body);
-  font-size: clamp(0.68rem, 1.55cqw, 0.92rem);
+  font-size: clamp(0.82rem, 1.9vw, 0.98rem);
   line-height: 1.2;
-  letter-spacing: 0.05em;
+  font-weight: 600;
+  letter-spacing: 0.015em;
   text-transform: uppercase;
-  color: var(--text-fade);
+  color: var(--muted);
   text-decoration: none;
   width: fit-content;
   transition: color 160ms ease;
