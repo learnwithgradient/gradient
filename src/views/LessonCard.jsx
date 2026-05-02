@@ -161,9 +161,6 @@ function LessonCard({ lesson, dealIndex = null }) {
 
   const selectedVideo =
     playlist.find((video) => video.id === selectedVideoId) ?? playlist[0] ?? null;
-  const selectedVideoMetadata = selectedVideo
-    ? metadataByWatchUrl[selectedVideo.watchUrl] ?? null
-    : null;
   const selectedVideoTitle = selectedVideo
     ? getVideoDisplayTitle(selectedVideo, metadataByWatchUrl, lesson)
     : lesson.subtopic;
@@ -213,40 +210,15 @@ function LessonCard({ lesson, dealIndex = null }) {
         <div className="lesson-card-divider" aria-hidden="true" />
 
         <section className="lesson-card-content-pane">
-          <div className="lesson-card-media-stack">
-            <div className="lesson-card-player-shell">
-              <iframe
-                className="lesson-card-player"
-                src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
-                title={`${selectedVideoTitle} lesson video`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            </div>
-
-            <div className="lesson-card-video-meta">
-              <p className="lesson-card-video-title" title={selectedVideoTitle}>
-                {selectedVideoTitle}
-              </p>
-              {selectedVideoMetadata?.authorName ? (
-                selectedVideoMetadata.authorUrl ? (
-                  <a
-                    className="lesson-card-video-author"
-                    href={selectedVideoMetadata.authorUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    title={selectedVideoMetadata.authorName}
-                  >
-                    {selectedVideoMetadata.authorName}
-                  </a>
-                ) : (
-                  <p className="lesson-card-video-author" title={selectedVideoMetadata.authorName}>
-                    {selectedVideoMetadata.authorName}
-                  </p>
-                )
-              ) : null}
-            </div>
+          <div className="lesson-card-player-shell">
+            <iframe
+              className="lesson-card-player"
+              src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
+              title={`${selectedVideoTitle} lesson video`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
           </div>
         </section>
       </div>
