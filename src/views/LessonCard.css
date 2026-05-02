@@ -118,15 +118,18 @@
 
 .lesson-card-plan-index {
   flex: 0 0 auto;
-  width: auto;
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.45em;
+  min-height: 1.45em;
   font-family: var(--font-body);
-  font-size: clamp(0.55rem, 1.2cqw, 0.7rem);
-  line-height: 1.1;
-  letter-spacing: 0.12em;
+  font-size: clamp(0.82rem, 1.9vw, 0.98rem);
+  line-height: 1.2;
+  letter-spacing: 0.015em;
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 600;
   color: inherit;
-  opacity: 0.74;
+  opacity: 0.82;
 }
 
 .lesson-card-plan-title {
