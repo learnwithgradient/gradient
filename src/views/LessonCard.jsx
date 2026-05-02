@@ -19,6 +19,8 @@ function getLessonPlanEntryLabel(entry) {
   }
 
   switch (entry.kind) {
+    case "intro":
+      return "Intro";
     case "document":
       return "Document";
     case "problem-set":
@@ -33,6 +35,11 @@ function getLessonPlanEntryLabel(entry) {
 
 function buildPlaceholderPlaylist(lesson) {
   return [
+    {
+      id: "intro",
+      kind: "intro",
+      label: "Intro",
+    },
     {
       id: "lecture-1",
       kind: "video",
@@ -114,6 +121,18 @@ function buildPlaceholderPlaylist(lesson) {
 function LessonContent({ entry, metadataByWatchUrl, lesson }) {
   if (!entry) {
     return null;
+  }
+
+  if (entry.kind === "intro") {
+    return (
+      <section className="lesson-card-intro" aria-label={`${lesson.subtopic} introduction`}>
+        <h1 className="lesson-card-intro-title">
+          <span className="lesson-card-intro-kicker">{lesson.topic}</span>
+          <span className="lesson-card-intro-main">{lesson.subtopic}</span>
+        </h1>
+        <p className="lesson-card-intro-subtitle">{lesson.section}</p>
+      </section>
+    );
   }
 
   if (entry.kind === "document") {
