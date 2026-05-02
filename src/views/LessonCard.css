@@ -5,6 +5,7 @@
   --lesson-card-toggle-edge-gap: clamp(0.78rem, 1.1vw, 1.05rem);
   --lesson-card-frame-width: 3px;
   --lesson-card-toggle-bleed-compensation: 0px;
+  --lesson-card-divider-y-inset: clamp(0.48rem, 1.15cqw, 0.82rem);
   align-items: stretch;
   justify-content: stretch;
   text-align: left;
@@ -209,14 +210,14 @@
 
 .lesson-card-divider {
   width: 1px;
-  height: 100%;
-  margin-top: 0;
+  height: calc(100% - (var(--lesson-card-divider-y-inset) * 2));
+  margin-block: var(--lesson-card-divider-y-inset);
   position: relative;
   z-index: 3;
   isolation: isolate;
   transition:
     height 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    margin-top 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 420ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
