@@ -214,18 +214,6 @@ function LessonCard({ lesson, dealIndex = null }) {
         <div className="lesson-card-divider" aria-hidden="true" />
 
         <section className="lesson-card-content-pane">
-          <p className="lesson-card-breadcrumb">
-            <span>{lesson.section}</span>
-            <span className="lesson-card-breadcrumb-separator" aria-hidden="true">
-              •
-            </span>
-            <span>{lesson.topic}</span>
-            <span className="lesson-card-breadcrumb-separator" aria-hidden="true">
-              •
-            </span>
-            <span>{lesson.subtopic}</span>
-          </p>
-
           <div className="lesson-card-media-stack">
             <div className="lesson-card-player-shell">
               <iframe
