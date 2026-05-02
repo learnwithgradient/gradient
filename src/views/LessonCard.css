@@ -5,6 +5,7 @@
   --lesson-card-toggle-height: clamp(2.28rem, 5.2cqw, 2.98rem);
   --lesson-card-toggle-squeeze-width: clamp(0.56rem, 1.25cqw, 0.76rem);
   --lesson-card-toggle-morph-duration: 640ms;
+  --lesson-card-toggle-icon-inset: clamp(0.04rem, 0.22cqw, 0.12rem);
   align-items: stretch;
   justify-content: stretch;
   text-align: left;
@@ -237,7 +238,7 @@
 .lesson-card-plan-toggle-icon {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: calc(50% + var(--lesson-card-toggle-icon-inset));
   z-index: 1;
   display: grid;
   place-items: center;
@@ -245,6 +246,10 @@
   height: clamp(1.08rem, 2.85cqw, 1.42rem);
   transform: translate(-50%, -50%);
   pointer-events: none;
+}
+
+.lesson-card-plan-toggle.is-collapsed .lesson-card-plan-toggle-icon {
+  left: calc(50% - var(--lesson-card-toggle-icon-inset));
 }
 
 .lesson-card-plan-toggle-icon svg {
