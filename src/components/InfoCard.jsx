@@ -1,4 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+
+const FULLSCREEN_IGNORE_SELECTOR =
+  "a, button, input, textarea, select, label, iframe, video, audio, [role='button'], [contenteditable='true']";
+const FULLSCREEN_ANIMATION_MS = 720;
 
 const DEAL_TILT_MIN_DEG = 1.6;
 const DEAL_TILT_MAX_DEG = 3.9;
@@ -50,17 +54,102 @@ function InfoCard({
   dealIndex = null,
   children,
 }) {
-  const screenClassNames = ["info-card-screen", screenClassName]
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenMotion, setFullscreenMotion] = useState(null);
+  const [hasEntered, setHasEntered] = useState(false);
+  const screenClassNames = [
+    "info-card-screen",
+    screenClassName,
+    isFullscreen ? "is-card-fullscreen" : "",
+  ]
     .filter(Boolean)
     .join(" ");
-  const cardClassNames = ["info-card-shell", cardClassName]
+  const cardClassNames = [
+    "info-card-shell",
+    cardClassName,
+    hasEntered ? "has-entered" : "",
+    isFullscreen ? "is-card-fullscreen" : "",
+    fullscreenMotion ? `is-${fullscreenMotion}-fullscreen` : "",
+  ]
     .filter(Boolean)
     .join(" ");
   const cardStyle = useInfoCardDealStyle(dealIndex);
 
+  useEffect(() => {
+    const entryTimeoutId = window.setTimeout(() => {
+      setHasEntered(true);
+    }, 820);
+
+    return () => {
+      window.clearTimeout(entryTimeoutId);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!fullscreenMotion) {
+      return undefined;
+    }
+
+    const motionTimeoutId = window.setTimeout(() => {
+      setFullscreenMotion(null);
+    }, FULLSCREEN_ANIMATION_MS);
+
+    return () => {
+      window.clearTimeout(motionTimeoutId);
+    };
+  }, [fullscreenMotion]);
+
+  const enterFullscreen = () => {
+    setHasEntered(true);
+    setIsFullscreen(true);
+    setFullscreenMotion("entering");
+  };
+
+  const exitFullscreen = () => {
+    setIsFullscreen(false);
+    setFullscreenMotion("exiting");
+  };
+
+  const handleCardDoubleClick = (event) => {
+    if (event.target.closest(FULLSCREEN_IGNORE_SELECTOR)) {
+      return;
+    }
+
+    if (isFullscreen) {
+      exitFullscreen();
+      return;
+    }
+
+    enterFullscreen();
+  };
+
+  useEffect(() => {
+    if (!isFullscreen) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        exitFullscreen();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isFullscreen]);
+
   return (
     <main className={screenClassNames} aria-live="polite">
-      <section className={cardClassNames} role={role} aria-label={ariaLabel} style={cardStyle}>
+      <section
+        className={cardClassNames}
+        role={role}
+        aria-label={ariaLabel}
+        style={cardStyle}
+        onDoubleClick={handleCardDoubleClick}
+      >
         {children}
       </section>
     </main>
