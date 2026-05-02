@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useId, useMemo, useRef, useState } from "react";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import InfoCard from "../components/InfoCard";
 
 const PLACEHOLDER_VIDEO_WATCH_URL =
@@ -36,25 +37,78 @@ function buildPlaceholderPlaylist(lesson) {
     {
       id: "part-2",
       kind: "document",
-      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
-      fallbackTitle: lesson.subtopic,
-      embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=90`,
+      title: lesson.subtopic,
+      body:
+        "Machine learning is the study of systems that improve their behavior from examples, feedback, and experience instead of being manually programmed for every case.",
     },
     {
       id: "part-3",
       kind: "problem-set",
-      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
-      fallbackTitle: lesson.subtopic,
-      embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=210`,
     },
     {
       id: "part-4",
       kind: "lab-problem",
-      watchUrl: PLACEHOLDER_VIDEO_WATCH_URL,
-      fallbackTitle: lesson.subtopic,
-      embedSrc: `${PLACEHOLDER_VIDEO_BASE_SRC}&start=330`,
     },
   ];
+}
+
+function LessonContent({ entry, metadataByWatchUrl, lesson }) {
+  if (!entry) {
+    return null;
+  }
+
+  if (entry.kind === "document") {
+    return (
+      <article className="lesson-card-document">
+        <p className="lesson-card-document-eyebrow">Document</p>
+        <h1 className="lesson-card-document-title">{entry.title ?? lesson.subtopic}</h1>
+        {entry.body ? <p className="lesson-card-document-body">{entry.body}</p> : null}
+      </article>
+    );
+  }
+
+  if (entry.kind === "problem-set" || entry.kind === "lab-problem") {
+    return <div className="lesson-card-empty-content" aria-hidden="true" />;
+  }
+
+  const selectedVideoMetadata = entry.watchUrl ? metadataByWatchUrl[entry.watchUrl] ?? null : null;
+  const selectedVideoTitle = getVideoDisplayTitle(entry, metadataByWatchUrl, lesson);
+
+  return (
+    <div className="lesson-card-media-stack">
+      <div className="lesson-card-player-shell">
+        <iframe
+          className="lesson-card-player"
+          src={entry.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
+          title={`${selectedVideoTitle} lesson video`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      </div>
+
+      <div className="lesson-card-video-meta">
+        <p className="lesson-card-video-title">Video Title Placeholder</p>
+        {selectedVideoMetadata?.authorName ? (
+          selectedVideoMetadata.authorUrl ? (
+            <a
+              className="lesson-card-video-author"
+              href={selectedVideoMetadata.authorUrl}
+              target="_blank"
+              rel="noreferrer"
+              title={selectedVideoMetadata.authorName}
+            >
+              {selectedVideoMetadata.authorName}
+            </a>
+          ) : (
+            <p className="lesson-card-video-author" title={selectedVideoMetadata.authorName}>
+              {selectedVideoMetadata.authorName}
+            </p>
+          )
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 function LessonCard({ lesson, dealIndex = null }) {
@@ -68,7 +122,9 @@ function LessonCard({ lesson, dealIndex = null }) {
   );
   const [selectedVideoId, setSelectedVideoId] = useState(playlist[0]?.id ?? null);
   const [metadataByWatchUrl, setMetadataByWatchUrl] = useState({});
+  const [isPlanCollapsed, setIsPlanCollapsed] = useState(false);
   const planScrollerRef = useRef(null);
+  const planRegionId = useId();
   const [planFadeState, setPlanFadeState] = useState({ top: false, bottom: false });
 
   useEffect(() => {
@@ -177,14 +233,8 @@ function LessonCard({ lesson, dealIndex = null }) {
     };
   }, [playlist, metadataByWatchUrl]);
 
-  const selectedVideo =
+  const selectedEntry =
     playlist.find((video) => video.id === selectedVideoId) ?? playlist[0] ?? null;
-  const selectedVideoMetadata = selectedVideo
-    ? metadataByWatchUrl[selectedVideo.watchUrl] ?? null
-    : null;
-  const selectedVideoTitle = selectedVideo
-    ? getVideoDisplayTitle(selectedVideo, metadataByWatchUrl, lesson)
-    : lesson.subtopic;
 
   return (
     <InfoCard
@@ -193,8 +243,8 @@ function LessonCard({ lesson, dealIndex = null }) {
       ariaLabel={`${lesson.subtopic} lesson card`}
       dealIndex={dealIndex}
     >
-      <div className="lesson-card-split">
-        <aside className="lesson-card-plan-pane" aria-label="Lesson plan">
+      <div className={`lesson-card-split${isPlanCollapsed ? " is-plan-collapsed" : ""}`}>
+        <aside className="lesson-card-plan-pane" id={planRegionId} aria-label="Lesson plan">
           <div
             className={`lesson-card-plan-scroll-shell${
               planFadeState.top ? " has-top-fade" : ""
@@ -202,7 +252,7 @@ function LessonCard({ lesson, dealIndex = null }) {
           >
             <div className="lesson-card-plan-scroller" ref={planScrollerRef}>
               {playlist.map((video, index) => {
-                const isActive = video.id === selectedVideo?.id;
+                const isActive = video.id === selectedEntry?.id;
 
                 return (
                   <button
@@ -226,42 +276,29 @@ function LessonCard({ lesson, dealIndex = null }) {
           </div>
         </aside>
 
-        <div className="lesson-card-divider" aria-hidden="true" />
+        <div className="lesson-card-divider">
+          <button
+            type="button"
+            className={`lesson-card-plan-toggle${isPlanCollapsed ? " is-collapsed" : ""}`}
+            aria-controls={planRegionId}
+            aria-expanded={!isPlanCollapsed}
+            aria-label={isPlanCollapsed ? "Show lesson plan" : "Hide lesson plan"}
+            onClick={() => setIsPlanCollapsed((currentValue) => !currentValue)}
+          >
+            {isPlanCollapsed ? (
+              <MdChevronRight aria-hidden="true" focusable="false" />
+            ) : (
+              <MdChevronLeft aria-hidden="true" focusable="false" />
+            )}
+          </button>
+        </div>
 
         <section className="lesson-card-content-pane">
-          <div className="lesson-card-media-stack">
-            <div className="lesson-card-player-shell">
-              <iframe
-                className="lesson-card-player"
-                src={selectedVideo?.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
-                title={`${selectedVideoTitle} lesson video`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            </div>
-
-            <div className="lesson-card-video-meta">
-              <p className="lesson-card-video-title">Video Title Placeholder</p>
-              {selectedVideoMetadata?.authorName ? (
-                selectedVideoMetadata.authorUrl ? (
-                  <a
-                    className="lesson-card-video-author"
-                    href={selectedVideoMetadata.authorUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    title={selectedVideoMetadata.authorName}
-                  >
-                    {selectedVideoMetadata.authorName}
-                  </a>
-                ) : (
-                  <p className="lesson-card-video-author" title={selectedVideoMetadata.authorName}>
-                    {selectedVideoMetadata.authorName}
-                  </p>
-                )
-              ) : null}
-            </div>
-          </div>
+          <LessonContent
+            entry={selectedEntry}
+            metadataByWatchUrl={metadataByWatchUrl}
+            lesson={lesson}
+          />
         </section>
       </div>
     </InfoCard>
