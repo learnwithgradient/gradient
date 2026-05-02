@@ -95,10 +95,17 @@ function VideoLessonCard({ lesson, dealIndex = null }) {
         <div className="video-lesson-divider" aria-hidden="true" />
 
         <section className="video-lesson-content-pane">
-          <div className="video-lesson-header">
-            <p className="video-lesson-eyebrow">{lesson.section}</p>
-            <p className="video-lesson-topic">{lesson.topic}</p>
-          </div>
+          <p className="video-lesson-breadcrumb">
+            <span>{lesson.section}</span>
+            <span className="video-lesson-breadcrumb-separator" aria-hidden="true">
+              •
+            </span>
+            <span>{lesson.topic}</span>
+            <span className="video-lesson-breadcrumb-separator" aria-hidden="true">
+              •
+            </span>
+            <span>{lesson.subtopic}</span>
+          </p>
 
           <div className="video-lesson-player-shell">
             <iframe
