@@ -317,6 +317,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   transition: padding-left 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -393,11 +394,24 @@ a.lesson-card-video-author:focus-visible {
 
 .lesson-card-document {
   width: 100%;
+  max-width: min(100%, 42rem);
+  margin-inline: auto;
+  padding: clamp(0.45rem, 2cqw, 1.2rem) clamp(0.2rem, 1.2cqw, 0.8rem) 0;
   align-self: stretch;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   text-align: left;
+}
+
+.lesson-card.is-card-fullscreen .lesson-card-document {
+  max-width: min(100%, 58rem);
+  margin-top: clamp(1.4rem, 4.5vh, 3rem);
+  padding: clamp(1rem, 3.2vh, 2rem) clamp(2.25rem, 5vw, 5rem) 0;
+}
+
+.lesson-card-split.is-plan-collapsed .lesson-card-document {
+  max-width: min(100%, 64rem);
 }
 
 .lesson-card-document-eyebrow {
