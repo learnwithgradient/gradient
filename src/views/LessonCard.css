@@ -2,6 +2,7 @@
   --info-card-padding: clamp(0.58rem, 1.8cqw, 1.05rem);
   --info-card-gap: clamp(0.38rem, 1cqw, 0.68rem);
   --lesson-card-toggle-size: clamp(1.38rem, 3.05cqw, 1.76rem);
+  --lesson-card-toggle-bottom-inset: clamp(0.4rem, 1.25cqw, 0.7rem);
   align-items: stretch;
   justify-content: stretch;
   text-align: left;
@@ -255,7 +256,7 @@
   appearance: none;
   position: absolute;
   left: 0;
-  bottom: 0;
+  bottom: var(--lesson-card-toggle-bottom-inset);
   width: var(--lesson-card-toggle-size);
   height: var(--lesson-card-toggle-size);
   padding: 0;
