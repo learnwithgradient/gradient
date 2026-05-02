@@ -207,6 +207,7 @@
   bottom: clamp(0.3rem, 1cqw, 0.58rem);
   width: var(--lesson-card-toggle-width);
   height: var(--lesson-card-toggle-height);
+  padding: 0;
   border: var(--frame-strong);
   border-color: var(--text);
   border-right: 0;
@@ -230,7 +231,7 @@
   fill: currentColor;
   stroke-width: 0;
   pointer-events: none;
-  transform: translateX(0);
+  transform: translateX(calc(var(--lesson-card-toggle-width) * -0.075));
 }
 
 .lesson-card-plan-toggle:hover,
@@ -251,6 +252,10 @@
   border-right: var(--frame-strong);
   border-left: 0;
   border-radius: 0 999px 999px 0;
+}
+
+.lesson-card-plan-toggle.is-collapsed svg {
+  transform: translateX(calc(var(--lesson-card-toggle-width) * 0.04));
 }
 
 .lesson-card-plan-toggle.is-collapsed:hover,
