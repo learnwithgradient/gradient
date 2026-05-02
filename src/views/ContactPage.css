@@ -8,14 +8,17 @@
 
 .contact-page-card .static-page-meta {
   margin-top: 0;
-  justify-items: end;
-  text-align: right;
+  width: fit-content;
+  max-width: 100%;
+  justify-self: end;
+  justify-items: center;
+  text-align: center;
 }
 
 .contact-page-inline-links {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: baseline;
   gap: 0.18rem 0.45rem;
   white-space: normal;
@@ -31,12 +34,7 @@
 
 @media (max-width: 900px) {
   .contact-page-card .static-page-meta {
-    justify-items: start;
-    text-align: left;
-  }
-
-  .contact-page-inline-links {
-    justify-content: flex-start;
+    justify-self: end;
   }
 }
 

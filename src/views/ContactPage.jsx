@@ -36,25 +36,6 @@ function ContactPage({ dealIndex = null }) {
             @aryanguptacs on X
           </a>
         </li>
-        <li className="contact-page-inline-links">
-          <a
-            className="contact-page-contact-link"
-            href="mailto:yaxpatel2004@gmail.com"
-          >
-            yaxpatel2004 [at] gmail [dot] com
-          </a>
-          <span className="contact-page-divider" aria-hidden="true">
-            //
-          </span>
-          <a
-            className="contact-page-contact-link"
-            href="https://x.com/yaxpatel_"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @yaxpatel_ on X
-          </a>
-        </li>
         <li>
           Notice anything wrong? Open an issue on{" "}
           <a href="https://github.com/aryan-cs/gradient/issues" target="_blank" rel="noopener noreferrer">
