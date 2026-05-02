@@ -36,17 +36,9 @@ const TOP_ROUTE_STATUSES = {
   donate: "donate",
   account: "account",
 };
-const STACKABLE_ROUTE_STATUSES = new Set([
-  "home",
-  "mission",
-  "contact",
-  "donate",
-  "account",
-  "lesson",
-  "coming-soon",
-  "not-found",
-]);
 const MAX_DEALT_CARDS = 18;
+const CARD_EXIT_MS = 720;
+const HISTORY_STACK_INDEX_KEY = "__gradientStackIndex";
 
 function resolveTopicTransitionMode() {
   if (typeof window === "undefined") {
@@ -123,11 +115,28 @@ function resolvePathStatus(pathname) {
   return { status: "lesson", matchedLesson };
 }
 
+function createRouteCard(pathname, id) {
+  const { status, matchedLesson } = resolvePathStatus(pathname);
+
+  return {
+    id,
+    status,
+    pathname,
+    path: stripBasePath(pathname) || "/",
+    lesson: matchedLesson,
+  };
+}
+
+function getHistoryStackIndex(state) {
+  const stackIndex = state?.[HISTORY_STACK_INDEX_KEY];
+  return Number.isInteger(stackIndex) && stackIndex >= 0 ? stackIndex : null;
+}
+
 function Navbar({ initialPathname: initialPathnameProp = null }) {
   const initialPathname =
     initialPathnameProp ?? (typeof window === "undefined" ? "/" : window.location.pathname);
-  const initialRoute = resolvePathStatus(initialPathname);
-  const initialRouteStatus = initialRoute.status;
+  const initialCard = createRouteCard(initialPathname, 0);
+  const initialRouteStatus = initialCard.status;
   const [topicTransitionMode] = useState(resolveTopicTransitionMode);
   const [screenPhase, setScreenPhase] = useState("closed");
   const [selectedSection, setSelectedSection] = useState(PROJECTOR_SECTIONS[0]);
@@ -140,14 +149,7 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   const [hoveredTopic, setHoveredTopic] = useState(null);
   const [activePathname, setActivePathname] = useState(initialPathname);
   const [routeStatus, setRouteStatus] = useState(initialRouteStatus);
-  const [dealtCards, setDealtCards] = useState(() => [
-    {
-      id: 0,
-      status: initialRouteStatus,
-      path: stripBasePath(initialPathname) || "/",
-      lesson: initialRoute.matchedLesson,
-    },
-  ]);
+  const [dealtCards, setDealtCards] = useState(() => [initialCard]);
 
   const timerRef = useRef(null);
   const morphFrameRef = useRef(null);
@@ -169,6 +171,9 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   const toTextNodesRef = useRef([]);
   const screenPhaseRef = useRef("closed");
   const subtopicReturnListenersRef = useRef(new WeakMap());
+  const routeTimelineRef = useRef([initialCard]);
+  const activeTimelineIndexRef = useRef(0);
+  const cardExitTimerRef = useRef(null);
 
   const parseCssNumber = (value, fallback = 0) => {
     const parsed = Number.parseFloat(value);
@@ -443,36 +448,114 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   const isHomeRoute = activePathSegments.length === 0;
   const isAccountRoute = isAccountPath(activePathname);
 
-  const syncStateFromPath = (pathname) => {
-    setActivePathname(pathname);
-    const { status, matchedLesson } = resolvePathStatus(pathname);
-    setRouteStatus(status);
-    if (STACKABLE_ROUTE_STATUSES.has(status)) {
-      const path = stripBasePath(pathname) || "/";
-      setDealtCards((currentCards) => {
-        const topCard = currentCards[currentCards.length - 1];
-        if (topCard && topCard.status === status && topCard.path === path) {
-          return currentCards;
-        }
-
-        const topId = topCard ? topCard.id : -1;
-        const nextCards = [
-          ...currentCards,
-          { id: topId + 1, status, path, lesson: matchedLesson },
-        ];
-        return nextCards.slice(-MAX_DEALT_CARDS);
-      });
+  const clearCardExitTimer = () => {
+    if (!cardExitTimerRef.current) {
+      return;
     }
-    return matchedLesson;
+
+    window.clearTimeout(cardExitTimerRef.current);
+    cardExitTimerRef.current = null;
+  };
+
+  const getVisibleTimelineCards = (activeIndex) => {
+    const firstVisibleIndex = Math.max(0, activeIndex - MAX_DEALT_CARDS + 1);
+    return routeTimelineRef.current
+      .slice(firstVisibleIndex, activeIndex + 1)
+      .filter(Boolean)
+      .map((card) => ({ ...card, isExiting: false }));
+  };
+
+  const renderTimelineAtIndex = (nextIndex, { exitingCards = [] } = {}) => {
+    const activeCard = routeTimelineRef.current[nextIndex];
+
+    if (!activeCard) {
+      return null;
+    }
+
+    activeTimelineIndexRef.current = nextIndex;
+    setActivePathname(activeCard.pathname);
+    setRouteStatus(activeCard.status);
+
+    const activeCards = getVisibleTimelineCards(nextIndex);
+    const outgoingCards = exitingCards.map((card) => ({ ...card, isExiting: true }));
+
+    setDealtCards([...activeCards, ...outgoingCards]);
+
+    if (outgoingCards.length > 0) {
+      clearCardExitTimer();
+      cardExitTimerRef.current = window.setTimeout(() => {
+        cardExitTimerRef.current = null;
+        setDealtCards(getVisibleTimelineCards(activeTimelineIndexRef.current));
+      }, CARD_EXIT_MS);
+    }
+
+    return activeCard.lesson;
+  };
+
+  const pushRouteCard = (nextPath, historyState = {}) => {
+    const currentIndex = activeTimelineIndexRef.current;
+    const nextIndex = currentIndex + 1;
+    const nextCard = createRouteCard(nextPath, nextIndex);
+
+    routeTimelineRef.current = [
+      ...routeTimelineRef.current.slice(0, nextIndex),
+      nextCard,
+    ];
+
+    window.history.pushState(
+      {
+        ...historyState,
+        [HISTORY_STACK_INDEX_KEY]: nextIndex,
+      },
+      "",
+      nextPath
+    );
+
+    clearCardExitTimer();
+    renderTimelineAtIndex(nextIndex);
+
+    return nextCard.lesson;
+  };
+
+  const syncPopStateFromPath = (pathname, historyState) => {
+    const nextIndexFromState = getHistoryStackIndex(historyState);
+    const currentIndex = activeTimelineIndexRef.current;
+    const fallbackIndex = routeTimelineRef.current.findIndex(
+      (card) => card?.pathname === pathname
+    );
+    const nextIndex =
+      nextIndexFromState !== null &&
+      routeTimelineRef.current[nextIndexFromState]?.pathname === pathname
+        ? nextIndexFromState
+        : fallbackIndex;
+
+    if (nextIndex >= 0) {
+      const exitingCards =
+        nextIndex < currentIndex
+          ? routeTimelineRef.current.slice(nextIndex + 1, currentIndex + 1).filter(Boolean)
+          : [];
+
+      clearCardExitTimer();
+      return renderTimelineAtIndex(nextIndex, { exitingCards });
+    }
+
+    const nextCard = createRouteCard(pathname, currentIndex + 1);
+    routeTimelineRef.current = [
+      ...routeTimelineRef.current.slice(0, currentIndex + 1),
+      nextCard,
+    ];
+
+    clearCardExitTimer();
+    return renderTimelineAtIndex(currentIndex + 1);
   };
 
   const navigateToSubtopicRoute = (section, topic, subtopic) => {
     const nextPath = buildLessonPath(section, topic, subtopic);
     if (window.location.pathname !== nextPath) {
-      window.history.pushState({ section, topic, subtopic }, "", nextPath);
+      pushRouteCard(nextPath, { section, topic, subtopic });
+    } else {
+      renderTimelineAtIndex(activeTimelineIndexRef.current);
     }
-
-    syncStateFromPath(nextPath);
 
     if (isOpenLikeNow()) {
       closeProjectorScreen();
@@ -482,9 +565,10 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   const navigateHome = () => {
     const nextPath = withBasePath("/");
     if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, "", nextPath);
+      pushRouteCard(nextPath);
+    } else {
+      renderTimelineAtIndex(activeTimelineIndexRef.current);
     }
-    syncStateFromPath(nextPath);
     if (isOpenLikeNow()) {
       closeProjectorScreen();
     }
@@ -493,9 +577,10 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   const navigateTopRoute = (routePath) => {
     const nextPath = withBasePath(routePath);
     if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, "", nextPath);
+      pushRouteCard(nextPath);
+    } else {
+      renderTimelineAtIndex(activeTimelineIndexRef.current);
     }
-    syncStateFromPath(nextPath);
     if (isOpenLikeNow()) {
       closeProjectorScreen();
     }
@@ -504,9 +589,10 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   const navigateAccount = () => {
     const nextPath = withBasePath("/account");
     if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, "", nextPath);
+      pushRouteCard(nextPath);
+    } else {
+      renderTimelineAtIndex(activeTimelineIndexRef.current);
     }
-    syncStateFromPath(nextPath);
     if (isOpenLikeNow()) {
       closeProjectorScreen();
     }
@@ -672,14 +758,24 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
   }, [activeSection]);
 
   useEffect(() => {
-    syncStateFromPath(window.location.pathname);
+    window.history.replaceState(
+      {
+        ...(window.history.state ?? {}),
+        [HISTORY_STACK_INDEX_KEY]: activeTimelineIndexRef.current,
+      },
+      "",
+      window.location.href
+    );
 
-    const handlePopState = () => {
-      syncStateFromPath(window.location.pathname);
+    const handlePopState = (event) => {
+      syncPopStateFromPath(window.location.pathname, event.state);
     };
 
     window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    return () => {
+      clearCardExitTimer();
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
 
   const handleSectionHover = (section) => {
@@ -851,7 +947,11 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
 
       <div className="info-card-deck">
         {dealtCards.map((card, index) => (
-          <div key={card.id} className="info-card-deck-layer" style={{ zIndex: index + 1 }}>
+          <div
+            key={card.id}
+            className={`info-card-deck-layer${card.isExiting ? " is-card-exiting-down" : ""}`}
+            style={{ zIndex: index + 1 }}
+          >
             {card.status === "home" && <HomePage dealIndex={card.id} />}
             {card.status === "mission" && <MissionPage dealIndex={card.id} />}
             {card.status === "contact" && <ContactPage dealIndex={card.id} />}
