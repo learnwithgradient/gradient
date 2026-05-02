@@ -960,7 +960,11 @@ function Navbar({ initialPathname: initialPathnameProp = null }) {
               <PageNotFound isComingSoon={true} dealIndex={card.id} />
             )}
             {card.status === "lesson" && (
-              <LessonCard lesson={card.lesson} dealIndex={card.id} />
+              <LessonCard
+                lesson={card.lesson}
+                dealIndex={card.id}
+                onLessonNavigate={navigateToSubtopicRoute}
+              />
             )}
             {card.status !== "home" &&
               card.status !== "mission" &&

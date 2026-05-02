@@ -409,6 +409,26 @@ a.lesson-card-video-author:focus-visible {
   width: min(100%, 56rem);
 }
 
+.lesson-card-next-up {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.lesson-card-next-up:hover .lesson-card-intro-main,
+.lesson-card-next-up:focus-visible .lesson-card-intro-main {
+  color: var(--muted);
+}
+
+.lesson-card-next-up:focus-visible {
+  outline: 3px solid var(--line);
+  outline-offset: 0.35rem;
+}
+
 .lesson-card-intro-title {
   margin: 0;
   width: 100%;
@@ -528,6 +548,19 @@ a.lesson-card-video-author:focus-visible {
   height: 100%;
   min-height: 0;
   border: 0;
+  opacity: 0;
+  transition: opacity 460ms ease;
+}
+
+.lesson-card-player-shell.is-video-loaded .lesson-card-player {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-card-player {
+    opacity: 1;
+    transition: none;
+  }
 }
 
 @media (max-width: 900px) {

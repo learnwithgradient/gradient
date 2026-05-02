@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import InfoCard from "../components/InfoCard";
+import { findNextLesson } from "../engine/lessonRouting";
 
 const PLACEHOLDER_VIDEO_WATCH_URL =
   "https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=1";
@@ -21,6 +22,8 @@ function getLessonPlanEntryLabel(entry) {
   switch (entry.kind) {
     case "intro":
       return "Intro";
+    case "next-up":
+      return "Next Up";
     case "document":
       return "Document";
     case "problem-set":
@@ -33,8 +36,8 @@ function getLessonPlanEntryLabel(entry) {
   }
 }
 
-function buildPlaceholderPlaylist(lesson) {
-  return [
+function buildPlaceholderPlaylist(lesson, nextLesson) {
+  const entries = [
     {
       id: "intro",
       kind: "intro",
@@ -116,9 +119,45 @@ function buildPlaceholderPlaylist(lesson) {
       label: "Lab Problem 3",
     },
   ];
+
+  if (nextLesson) {
+    entries.push({
+      id: "next-up",
+      kind: "next-up",
+      label: "Next Up",
+      nextLesson,
+    });
+  }
+
+  return entries;
 }
 
-function LessonContent({ entry, metadataByWatchUrl, lesson }) {
+function LessonContent({ entry, metadataByWatchUrl, lesson, onLessonNavigate }) {
+  const videoLoadFrameRef = useRef(0);
+  const videoLoadFallbackRef = useRef(0);
+  const isLectureVideo = entry?.kind === "video";
+  const [isLectureVideoLoaded, setIsLectureVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    window.cancelAnimationFrame(videoLoadFrameRef.current);
+    window.clearTimeout(videoLoadFallbackRef.current);
+
+    if (!isLectureVideo) {
+      setIsLectureVideoLoaded(false);
+      return undefined;
+    }
+
+    setIsLectureVideoLoaded(false);
+    videoLoadFallbackRef.current = window.setTimeout(() => {
+      setIsLectureVideoLoaded(true);
+    }, 1200);
+
+    return () => {
+      window.cancelAnimationFrame(videoLoadFrameRef.current);
+      window.clearTimeout(videoLoadFallbackRef.current);
+    };
+  }, [isLectureVideo, entry?.id, entry?.embedSrc]);
+
   if (!entry) {
     return null;
   }
@@ -132,6 +171,35 @@ function LessonContent({ entry, metadataByWatchUrl, lesson }) {
         </h1>
         <p className="lesson-card-intro-subtitle">{lesson.section}</p>
       </section>
+    );
+  }
+
+  if (entry.kind === "next-up") {
+    const nextLesson = entry.nextLesson;
+
+    if (!nextLesson) {
+      return null;
+    }
+
+    const handleNextLessonClick = () => {
+      onLessonNavigate?.(nextLesson.section, nextLesson.topic, nextLesson.subtopic);
+    };
+
+    return (
+      <button
+        type="button"
+        className="lesson-card-intro lesson-card-next-up"
+        aria-label={`Go to next lesson: ${nextLesson.subtopic}`}
+        onClick={handleNextLessonClick}
+      >
+        <h1 className="lesson-card-intro-title">
+          <span className="lesson-card-intro-kicker">Next Up</span>
+          <span className="lesson-card-intro-main">{nextLesson.subtopic}</span>
+        </h1>
+        <p className="lesson-card-intro-subtitle">
+          {nextLesson.section} / {nextLesson.topic}
+        </p>
+      </button>
     );
   }
 
@@ -150,17 +218,32 @@ function LessonContent({ entry, metadataByWatchUrl, lesson }) {
 
   const selectedVideoMetadata = entry.watchUrl ? metadataByWatchUrl[entry.watchUrl] ?? null : null;
   const selectedVideoTitle = getVideoDisplayTitle(entry, metadataByWatchUrl, lesson);
+  const playerShellClassName = [
+    "lesson-card-player-shell",
+    isLectureVideoLoaded ? "is-video-loaded" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const handleLectureVideoLoad = () => {
+    window.clearTimeout(videoLoadFallbackRef.current);
+    window.cancelAnimationFrame(videoLoadFrameRef.current);
+    videoLoadFrameRef.current = window.requestAnimationFrame(() => {
+      setIsLectureVideoLoaded(true);
+    });
+  };
 
   return (
     <div className="lesson-card-media-stack">
-      <div className="lesson-card-player-shell">
+      <div className={playerShellClassName}>
         <iframe
+          key={`${entry.id}-${entry.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}`}
           className="lesson-card-player"
           src={entry.embedSrc ?? PLACEHOLDER_VIDEO_BASE_SRC}
           title={`${selectedVideoTitle} lesson video`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
+          onLoad={handleLectureVideoLoad}
         />
       </div>
 
@@ -188,13 +271,13 @@ function LessonContent({ entry, metadataByWatchUrl, lesson }) {
   );
 }
 
-function LessonCard({ lesson, dealIndex = null }) {
+function LessonCard({ lesson, dealIndex = null, onLessonNavigate = null }) {
   if (!lesson) {
     return null;
   }
 
   const playlist = useMemo(
-    () => buildPlaceholderPlaylist(lesson),
+    () => buildPlaceholderPlaylist(lesson, findNextLesson(lesson)),
     [lesson.section, lesson.topic, lesson.subtopic]
   );
   const [selectedVideoId, setSelectedVideoId] = useState(playlist[0]?.id ?? null);
@@ -384,6 +467,7 @@ function LessonCard({ lesson, dealIndex = null }) {
             entry={selectedEntry}
             metadataByWatchUrl={metadataByWatchUrl}
             lesson={lesson}
+            onLessonNavigate={onLessonNavigate}
           />
         </section>
       </div>
