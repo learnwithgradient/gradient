@@ -432,7 +432,7 @@
 }
 
 .lesson-card-split.is-plan-collapsed .lesson-card-content-pane {
-  padding-left: calc(var(--lesson-card-toggle-width) + clamp(0.28rem, 0.8cqw, 0.5rem));
+  padding-left: 0;
 }
 
 .lesson-card-media-stack {
