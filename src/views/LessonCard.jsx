@@ -129,7 +129,7 @@ function LessonCard({ lesson, dealIndex = null }) {
           <p className="lesson-card-pane-label">Lesson Plan</p>
           <div className="lesson-card-plan-scroll-shell">
             <div className="lesson-card-plan-scroller">
-              {playlist.map((video) => {
+              {playlist.map((video, index) => {
                 const isActive = video.id === selectedVideo?.id;
 
                 return (
@@ -140,8 +140,8 @@ function LessonCard({ lesson, dealIndex = null }) {
                     aria-pressed={isActive}
                     onClick={() => setSelectedVideoId(video.id)}
                   >
-                    <span className="lesson-card-plan-icon" aria-hidden="true">
-                      <span className="lesson-card-plan-icon-triangle" />
+                    <span className="lesson-card-plan-index" aria-hidden="true">
+                      {index}
                     </span>
                     <span
                       className="lesson-card-plan-title"

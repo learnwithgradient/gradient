@@ -8,7 +8,7 @@
 
 .lesson-card-split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 5fr);
+  grid-template-columns: minmax(0, 1.5fr) 1px minmax(0, 4.5fr);
   column-gap: clamp(0.3rem, 0.9cqw, 0.62rem);
   width: 100%;
   height: 100%;
@@ -110,29 +110,17 @@
   color: var(--surface);
 }
 
-.lesson-card-plan-icon {
+.lesson-card-plan-index {
   flex: 0 0 auto;
-  width: clamp(0.76rem, 15cqi, 0.98rem);
-  height: clamp(0.76rem, 15cqi, 0.98rem);
-  border-radius: 999px;
-  background: currentColor;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.92;
-}
-
-.lesson-card-plan-item.is-active .lesson-card-plan-icon {
-  background: currentColor;
-}
-
-.lesson-card-plan-icon-triangle {
-  width: 0;
-  height: 0;
-  border-top: clamp(0.14rem, 2.9cqi, 0.2rem) solid transparent;
-  border-bottom: clamp(0.14rem, 2.9cqi, 0.2rem) solid transparent;
-  border-left: clamp(0.22rem, 4.5cqi, 0.3rem) solid var(--surface);
-  margin-left: clamp(0.03rem, 0.8cqi, 0.06rem);
+  width: clamp(0.72rem, 14cqi, 0.96rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.48rem, 8.4cqi, 0.66rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: inherit;
+  opacity: 0.82;
 }
 
 .lesson-card-plan-title {
