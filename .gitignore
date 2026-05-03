@@ -20,7 +20,9 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
+!outreacher/.env.example
 *.local
+outreacher/send-history.jsonl
 
 # test / coverage
 coverage/

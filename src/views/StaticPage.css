@@ -21,7 +21,7 @@
 }
 
 .static-page-title {
-  margin: 0;
+  margin: 0 0 clamp(0.42rem, 1.45cqw, 0.95rem);
   width: 100%;
   font-family: var(--font-display);
   font-size: clamp(1.85rem, 8.3cqw, 4.65rem);

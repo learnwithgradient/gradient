@@ -88,3 +88,66 @@ export const findLessonBySlugs = (sectionSlug, topicSlug, subtopicSlug) => {
 
   return null;
 };
+
+export const findNextLesson = (lesson) => {
+  if (!lesson) {
+    return null;
+  }
+
+  const sectionIndex = PROJECTOR_SECTIONS.findIndex((section) => section === lesson.section);
+  if (sectionIndex === -1) {
+    return null;
+  }
+
+  for (
+    let currentSectionIndex = sectionIndex;
+    currentSectionIndex < PROJECTOR_SECTIONS.length;
+    currentSectionIndex += 1
+  ) {
+    const section = PROJECTOR_SECTIONS[currentSectionIndex];
+    const topicEntries = PROJECTOR_TOPICS[section] ?? [];
+    const startTopicIndex =
+      currentSectionIndex === sectionIndex
+        ? topicEntries.findIndex((topicEntry) => topicEntry.topic === lesson.topic)
+        : 0;
+
+    if (startTopicIndex === -1) {
+      continue;
+    }
+
+    for (
+      let currentTopicIndex = startTopicIndex;
+      currentTopicIndex < topicEntries.length;
+      currentTopicIndex += 1
+    ) {
+      const topicEntry = topicEntries[currentTopicIndex];
+      let startSubtopicIndex = 0;
+
+      if (currentSectionIndex === sectionIndex && currentTopicIndex === startTopicIndex) {
+        const currentSubtopicIndex = topicEntry.subtopics.findIndex(
+          (subtopic) => subtopic === lesson.subtopic
+        );
+
+        if (currentSubtopicIndex === -1) {
+          continue;
+        }
+
+        startSubtopicIndex = currentSubtopicIndex + 1;
+      }
+
+      for (
+        let currentSubtopicIndex = startSubtopicIndex;
+        currentSubtopicIndex < topicEntry.subtopics.length;
+        currentSubtopicIndex += 1
+      ) {
+        return {
+          section,
+          topic: topicEntry.topic,
+          subtopic: topicEntry.subtopics[currentSubtopicIndex],
+        };
+      }
+    }
+  }
+
+  return null;
+};
